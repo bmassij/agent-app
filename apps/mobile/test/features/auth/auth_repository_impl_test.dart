@@ -126,4 +126,45 @@ void main() {
     );
     expect(await repo().isBiometricEnabled(), isTrue);
   });
+
+  test('validateSession returns false when no key stored', () async {
+    expect(await repo().validateSession(), isFalse);
+  });
+
+  test('validateSession returns true when stored key is valid', () async {
+    await storage.writeKey(SecureStorageKeys.cursorApiKey, 'cursor_valid');
+    when(() => remote.fetchMe('cursor_valid')).thenAnswer((_) async => me);
+
+    expect(await repo().validateSession(), isTrue);
+  });
+
+  test('validateSession clears key and returns false on 401', () async {
+    await storage.writeKey(SecureStorageKeys.cursorApiKey, 'cursor_bad');
+    when(() => remote.fetchMe('cursor_bad')).thenThrow(
+      DioException(
+        requestOptions: RequestOptions(path: '/me'),
+        response: Response(
+          requestOptions: RequestOptions(path: '/me'),
+          statusCode: 401,
+        ),
+      ),
+    );
+
+    expect(await repo().validateSession(), isFalse);
+    expect(await storage.readKey(SecureStorageKeys.cursorApiKey), isNull);
+  });
+
+  test('validateSession allows offline when network fails', () async {
+    await storage.writeKey(SecureStorageKeys.cursorApiKey, 'cursor_key');
+    when(() => remote.fetchMe('cursor_key')).thenThrow(
+      DioException(
+        requestOptions: RequestOptions(path: '/me'),
+        type: DioExceptionType.connectionTimeout,
+        message: 'timeout',
+      ),
+    );
+
+    expect(await repo().validateSession(), isTrue);
+    expect(await storage.readKey(SecureStorageKeys.cursorApiKey), 'cursor_key');
+  });
 }
