@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:cursor_mobile_commander/app/auth_session_provider.dart';
 import 'package:cursor_mobile_commander/app/routes.dart';
 import 'package:cursor_mobile_commander/features/agents/presentation/agent_list_screen.dart';
+import 'package:cursor_mobile_commander/features/auth/presentation/auth_provider.dart';
+import 'package:cursor_mobile_commander/features/auth/presentation/key_setup_screen.dart';
 import 'package:cursor_mobile_commander/features/home/presentation/home_shell_screen.dart';
 import 'package:cursor_mobile_commander/features/onboarding/presentation/connect_cursor_screen.dart';
 import 'package:cursor_mobile_commander/features/onboarding/presentation/connect_github_screen.dart';
 import 'package:cursor_mobile_commander/features/onboarding/presentation/first_agent_screen.dart';
+import 'package:cursor_mobile_commander/features/onboarding/presentation/onboarding_provider.dart';
 import 'package:cursor_mobile_commander/features/onboarding/presentation/pin_repo_screen.dart';
 import 'package:cursor_mobile_commander/features/onboarding/presentation/welcome_screen.dart';
 import 'package:cursor_mobile_commander/features/projects/presentation/dashboard_screen.dart';
@@ -17,10 +19,11 @@ import 'package:cursor_mobile_commander/shared/widgets/error_view.dart';
 import 'package:cursor_mobile_commander/shared/widgets/loading_spinner.dart';
 import 'package:cursor_mobile_commander/shared/widgets/placeholder_screen.dart';
 
-/// Notifies [GoRouter] when auth session state changes.
+/// Notifies [GoRouter] when auth or onboarding state changes.
 class _AuthRefreshNotifier extends ChangeNotifier {
   _AuthRefreshNotifier(this._ref) {
     _ref.listen(authSessionProvider, (_, __) => notifyListeners());
+    _ref.listen(onboardingCompletedProvider, (_, __) => notifyListeners());
   }
 
   final Ref _ref;
@@ -29,21 +32,27 @@ class _AuthRefreshNotifier extends ChangeNotifier {
 /// Auth guard redirect logic (extracted for unit testing).
 String? authRedirect({
   required AsyncValue<bool> auth,
+  required AsyncValue<bool> onboarding,
   required String location,
 }) {
   final onOnboarding = location.startsWith(Routes.onboarding);
 
-  if (auth.isLoading) {
+  if (auth.isLoading || onboarding.isLoading) {
     return null;
   }
 
   final isAuthenticated = auth.valueOrNull ?? false;
+  final onboardingDone = onboarding.valueOrNull ?? false;
 
   if (!isAuthenticated && !onOnboarding) {
     return Routes.onboarding;
   }
 
-  if (isAuthenticated && onOnboarding) {
+  if (isAuthenticated && !onboardingDone && !onOnboarding) {
+    return Routes.connectCursor;
+  }
+
+  if (isAuthenticated && onboardingDone && onOnboarding) {
     return Routes.homeProjects;
   }
 
@@ -63,9 +72,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (context, state) {
       final auth = ref.read(authSessionProvider);
+      final onboarding = ref.read(onboardingCompletedProvider);
       return authRedirect(
         auth: auth,
         location: state.matchedLocation,
+        onboarding: onboarding,
       );
     },
     routes: [
@@ -76,6 +87,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'connect-cursor',
             builder: (context, state) => const ConnectCursorScreen(),
+            routes: [
+              GoRoute(
+                path: 'key-setup',
+                builder: (context, state) => const KeySetupScreen(),
+              ),
+            ],
           ),
           GoRoute(
             path: 'connect-github',

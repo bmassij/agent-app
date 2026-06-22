@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:cursor_mobile_commander/app/routes.dart';
+import 'package:cursor_mobile_commander/shared/constants/sizes.dart';
 
-/// Placeholder — Sprint 2 implements API key paste and QR scan.
+/// Routes to API key setup.
 class ConnectCursorScreen extends StatelessWidget {
   const ConnectCursorScreen({super.key});
 
@@ -11,15 +12,19 @@ class ConnectCursorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Connect Cursor')),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(AppSizes.paddingLarge),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('API key setup — Sprint 2'),
-            const SizedBox(height: 16),
+            const Text(
+              'Cursor Mobile Commander uses your Cursor API key to manage '
+              'Cloud Agents. Your key is stored securely on this device.',
+            ),
+            const Spacer(),
             FilledButton(
-              onPressed: () => context.go(Routes.connectGithub),
-              child: const Text('Continue'),
+              onPressed: () => context.push(Routes.keySetup),
+              child: const Text('Enter API key'),
             ),
           ],
         ),

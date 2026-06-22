@@ -2,6 +2,7 @@
 abstract final class Routes {
   static const String onboarding = '/onboarding';
   static const String connectCursor = '/onboarding/connect-cursor';
+  static const String keySetup = '/onboarding/connect-cursor/key-setup';
   static const String connectGithub = '/onboarding/connect-github';
   static const String pinRepo = '/onboarding/pin-repo';
   static const String firstAgent = '/onboarding/first-agent';
