@@ -1,0 +1,10 @@
+# melos_managed_dependency_overrides: cursor_api_agents,cursor_api_core,cursor_api_stream,github_api
+dependency_overrides:
+  cursor_api_agents:
+    path: ..\\..\\packages\\cursor_api_agents
+  cursor_api_core:
+    path: ..\\..\\packages\\cursor_api_core
+  cursor_api_stream:
+    path: ..\\..\\packages\\cursor_api_stream
+  github_api:
+    path: ..\\..\\packages\\github_api
