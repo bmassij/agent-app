@@ -24,17 +24,17 @@ Keys are **never** stored in:
 
 ### Cursor API Key
 1. User enters key in KeySetupScreen (paste or QR scan)
-2. Key is immediately written to secure storage
-3. App validates key with `GET /v1/me` before accepting
-4. Key is read once per app session and injected into HTTP client
-5. Key is cleared from Dart heap after injection (best-effort — Dart GC limitation)
-6. User can rotate key in Settings → Key Management
+2. App validates key with `GET /v1/me` before saving to secure storage
+3. On each cold start, `authSessionProvider` re-validates the stored key via `GET /v1/me`
+4. Invalid keys (HTTP 401) are cleared from secure storage and the user is sent to onboarding
+5. Network errors during validation allow offline access when a key is already stored
+6. User can rotate key in Settings → Key Management (Sprint 6)
 
 ### GitHub Access Token
-1. Retrieved via OAuth 2.0 PKCE flow
-2. Written to secure storage after exchange
-3. Read only when making GitHub API calls
-4. Refresh flow handles expiration silently
+1. Retrieved via OAuth 2.0 PKCE flow with `state` CSRF parameter
+2. `state` and PKCE verifier stored in secure storage until callback completes
+3. Written to secure storage after successful token exchange
+4. Read only when making GitHub API calls
 
 ---
 
@@ -59,10 +59,11 @@ Certificate pinning is **disabled in debug builds** to allow local proxy tools d
 ## Authentication
 
 ### Biometric Lock
-- Enabled by default on first launch
+- Opt-in during onboarding (user chooses enable or skip)
 - Uses `local_auth` (Face ID / fingerprint / device PIN fallback)
-- App locks after configurable idle timeout (default: 5 minutes, minimum: 1 minute)
-- Lock state is stored in memory — not on disk
+- iOS requires `NSFaceIDUsageDescription` in `Info.plist`
+- Session unlock state is stored in memory — not on disk
+- Idle re-lock after timeout is planned for Sprint 6
 
 ### Screen Security
 - Android: `FLAG_SECURE` prevents screenshots and screen recording of app content

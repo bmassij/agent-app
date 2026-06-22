@@ -85,6 +85,8 @@ dart run generate_key_qr.dart --key=YOUR_CURSOR_API_KEY
 
 You can also paste the key directly in **Connect Cursor → Enter key manually**. The app validates it with `GET /v1/me` before saving to secure storage.
 
+On each app launch, the stored key is re-validated via `GET /v1/me`. Revoked keys (401) clear storage and return the user to onboarding. Network failures keep the session when offline.
+
 ### GitHub OAuth (PKCE)
 
 Register a GitHub OAuth App with:
@@ -101,6 +103,15 @@ flutter run --dart-define=GITHUB_CLIENT_ID=your_github_oauth_app_client_id
 ```
 
 Deep links are configured in `AndroidManifest.xml` (`cursormc://oauth`) and iOS `Info.plist` (`CFBundleURLTypes`).
+
+OAuth uses PKCE (`S256`) plus a `state` parameter stored in secure storage and validated on callback to prevent CSRF.
+
+### iOS privacy strings
+
+`ios/Runner/Info.plist` must include:
+
+- `NSFaceIDUsageDescription` — biometric unlock
+- `NSCameraUsageDescription` — QR API key scan
 
 ### Drift codegen
 
