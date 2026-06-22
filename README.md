@@ -8,7 +8,8 @@ Native Flutter mobile client for managing Cursor Background Cloud Agents from yo
 # Prerequisites: Flutter 3.22+, melos 3.x
 dart pub global activate melos
 
-cd cursor-mobile-commander
+git clone https://github.com/bmassij/agent-app.git
+cd agent-app
 melos bootstrap
 
 # Generate Android/iOS platform folders (first time only)

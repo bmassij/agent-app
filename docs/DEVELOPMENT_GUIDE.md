@@ -19,8 +19,8 @@
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/cursor-mobile-commander.git
-cd cursor-mobile-commander
+git clone https://github.com/bmassij/agent-app.git
+cd agent-app
 
 # 2. Install all packages across the monorepo
 melos bootstrap

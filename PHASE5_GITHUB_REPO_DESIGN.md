@@ -9,7 +9,7 @@
 cursor-mobile-commander
 ```
 
-GitHub URL: `https://github.com/{owner}/cursor-mobile-commander`
+GitHub URL: `https://github.com/bmassij/agent-app`
 
 ---
 
