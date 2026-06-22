@@ -1,0 +1,17 @@
+name: cursor_api_stream
+description: SSE parser and stream reconnection for Cursor Cloud Agent runs.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.22.0'
+
+dependencies:
+  cursor_api_core:
+    path: ../cursor_api_core
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter

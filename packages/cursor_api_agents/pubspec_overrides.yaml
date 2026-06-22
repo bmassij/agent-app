@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: cursor_api_core
+dependency_overrides:
+  cursor_api_core:
+    path: ..\\cursor_api_core
