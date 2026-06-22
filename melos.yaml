@@ -1,0 +1,36 @@
+name: cursor_mobile_commander
+
+packages:
+  - apps/mobile
+  - packages/**
+
+scripts:
+  test:
+    run: melos exec -- flutter test
+    description: Run tests in all packages
+
+  lint:
+    run: melos exec -- dart analyze
+    description: Lint all packages
+
+  format:
+    run: melos exec -- dart format .
+    description: Format all packages
+
+  format-check:
+    run: melos exec -- dart format --output=none --set-exit-if-changed .
+    description: Check formatting (CI)
+
+  codegen:
+    run: melos exec --depends-on=build_runner -- flutter pub run build_runner build --delete-conflicting-outputs
+    description: Run code generation
+
+  build-check:
+    run: |
+      cd apps/mobile
+      flutter build apk --debug
+    description: Verify Android debug build
+
+  clean:
+    run: melos exec -- flutter clean
+    description: Clean all packages
