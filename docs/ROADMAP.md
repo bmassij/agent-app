@@ -156,7 +156,21 @@ See `AUDIT_REMEDIATION_REPORT.md` and `SPRINT2_FINAL_HANDOFF.md`.
 
 See `SPRINT3_COMPLETION_REPORT.md`.
 
-**Next:** Sprint 4 — Core Chat
+### Sprint 4 — Core Chat ✅
+
+**Goal:** Create agent, stream chat, follow-up, cancel, history.
+
+**Status:** Complete (2026-06-22)
+
+- [x] `features/agents/` — list, detail, local + API sync
+- [x] `features/chat/` — chat UI, composer, SSE persistence, live stream
+- [x] `features/tasks/` — runs grouped by status, run logs
+- [x] Live SSE + reconnection + raw SSE logging
+- [x] **133 tests** green (`melos run test`)
+
+See `SPRINT4_COMPLETION_REPORT.md`.
+
+**Next:** Sprint 5 — GitHub Integration
 
 ### v1.0.0 (planned)
 - Initial release
