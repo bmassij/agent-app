@@ -9,6 +9,7 @@ environment:
 dependencies:
   cursor_api_core:
     path: ../cursor_api_core
+  dio: ^5.4.3
 
 dev_dependencies:
   flutter_lints: ^4.0.0

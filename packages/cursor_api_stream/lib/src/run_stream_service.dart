@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cursor_api_core/cursor_api_core.dart';
+import 'package:dio/dio.dart';
 import 'package:cursor_api_stream/src/logging/sse_event_logger.dart';
 import 'package:cursor_api_stream/src/models/sse_event.dart';
 import 'package:cursor_api_stream/src/parser/sse_parser.dart';
@@ -76,5 +78,113 @@ class RunStreamService {
       'Accept': 'text/event-stream',
       if (lastEventId != null) 'Last-Event-ID': lastEventId,
     };
+  }
+
+  /// Opens a live SSE connection with exponential backoff reconnection.
+  ///
+  /// On HTTP 410 / [CursorStreamExpiredError], marks stream expired and stops.
+  /// Raw lines are logged via [SseEventLogger] on first connection.
+  Stream<SseEvent> connectRun({
+    required String agentId,
+    required String runId,
+    String? lastEventId,
+    Dio? dio,
+    void Function()? onStreamExpired,
+  }) async* {
+    var resumeId = lastEventId;
+    final http = dio ??
+        Dio(
+          BaseOptions(
+            baseUrl: _baseUrl,
+            connectTimeout: CursorApiConfig.connectTimeout,
+            receiveTimeout: Duration.zero,
+          ),
+        );
+
+    _reconnection.reset();
+    var afterFailure = false;
+
+    while (true) {
+      if (_reconnection.state == StreamConnectionState.expired) {
+        onStreamExpired?.call();
+        return;
+      }
+
+      if (afterFailure) {
+        final delay = _reconnection.nextDelay();
+        if (delay == null) {
+          return;
+        }
+        await Future.delayed(delay);
+      }
+
+      try {
+        final response = await http.get<ResponseBody>(
+          '/agents/$agentId/runs/$runId/stream',
+          queryParameters:
+              resumeId != null ? {'lastEventId': resumeId} : null,
+          options: Options(
+            headers: streamHeaders(lastEventId: resumeId),
+            responseType: ResponseType.stream,
+            validateStatus: (code) => code != null && code < 500,
+          ),
+        );
+
+        if (response.statusCode == 410) {
+          _reconnection.markStreamExpired();
+          onStreamExpired?.call();
+          return;
+        }
+
+        if (response.statusCode != 200 || response.data == null) {
+          throw DioException(
+            requestOptions: RequestOptions(path: '/stream'),
+            response: Response(
+              requestOptions: RequestOptions(path: '/stream'),
+              statusCode: response.statusCode,
+            ),
+          );
+        }
+
+        _reconnection.markConnected();
+        afterFailure = false;
+
+        final raw = response.data!.stream
+            .map((chunk) => utf8.decode(chunk, allowMalformed: true));
+
+        await for (final event in parseRawStream(
+          raw,
+          agentId: agentId,
+          runId: runId,
+        )) {
+          if (event.id != null) {
+            resumeId = event.id;
+          }
+          yield event;
+          if (event is DoneEvent || event is ErrorEvent) {
+            return;
+          }
+        }
+
+        _reconnection.markDisconnected();
+        afterFailure = true;
+      } on DioException catch (e) {
+        final mapped = CursorHttpClient.mapDioException(e);
+        if (mapped is CursorStreamExpiredError) {
+          _reconnection.markStreamExpired();
+          onStreamExpired?.call();
+          return;
+        }
+        _reconnection.markDisconnected();
+        afterFailure = true;
+        if (_reconnection.attempt >= _reconnection.maxAttempts) {
+          yield ErrorEvent(
+            code: 'stream_error',
+            message: mapped.toString(),
+          );
+          return;
+        }
+      }
+    }
   }
 }
