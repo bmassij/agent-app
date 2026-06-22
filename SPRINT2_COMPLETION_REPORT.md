@@ -148,11 +148,11 @@ Sprint 2 delivers the authentication and persistence layer: a 10-table Drift dat
 
 Sprint 2 changes are committed as:
 
-1. `feat(database): drift schema and providers`
-2. `feat(auth): api key, biometrics, github oauth pkce`
-3. `feat(onboarding): wire flows to auth and database`
-4. `test(mobile): sprint 2 auth and database coverage`
-5. `docs: sprint 2 completion and development guide updates`
+1. `0889ae2` — `feat(database): drift schema and providers`
+2. `d067251` — `feat(auth): api key validation, biometrics, and github oauth pkce`
+3. `19c579b` — `feat(onboarding): wire auth and database into end-to-end flow`
+4. `3cc84bf` — `test(mobile): add sprint 2 auth and database coverage`
+5. `dd52661` — `docs: sprint 2 completion report and development guide updates`
 
 ---
 
