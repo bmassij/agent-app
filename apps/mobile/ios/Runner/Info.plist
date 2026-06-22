@@ -66,6 +66,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access is used to scan QR codes for transferring your Cursor API key.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Face ID is used to unlock Cursor Mobile Commander and protect your API keys.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
