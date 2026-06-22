@@ -7,6 +7,10 @@ import 'package:cursor_mobile_commander/features/auth/domain/auth_model.dart';
 abstract interface class AuthRepository {
   Future<bool> hasCursorKey();
 
+  /// Validates stored key via GET /v1/me. Clears key on 401.
+  /// Returns true on network errors when a key exists (offline access).
+  Future<bool> validateSession();
+
   Future<Either<AuthFailure, CursorMeModel>> validateCursorKey(String key);
 
   Future<Either<AuthFailure, CursorMeModel>> saveAndValidateCursorKey(

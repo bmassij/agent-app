@@ -38,6 +38,25 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<bool> validateSession() async {
+    final key = await _secureStorage.readKey(SecureStorageKeys.cursorApiKey);
+    if (key == null || key.isEmpty) {
+      return false;
+    }
+    final result = await validateCursorKey(key);
+    return result.fold(
+      (failure) async {
+        if (failure is InvalidKeyFailure) {
+          await clearCursorKey();
+          return false;
+        }
+        return true;
+      },
+      (_) => true,
+    );
+  }
+
+  @override
   Future<Either<AuthFailure, CursorMeModel>> validateCursorKey(
     String key,
   ) async {

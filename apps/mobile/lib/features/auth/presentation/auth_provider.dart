@@ -29,7 +29,7 @@ class AuthSessionNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
     final repo = await ref.watch(authRepositoryProvider.future);
-    return repo.hasCursorKey();
+    return repo.validateSession();
   }
 
   Future<void> refresh() async {

@@ -19,6 +19,9 @@ String generatePkceCodeVerifier() {
   return base64UrlEncode(values).replaceAll('=', '');
 }
 
+/// OAuth CSRF state token (exposed for unit tests).
+String generateOAuthState() => generatePkceCodeVerifier();
+
 String pkceCodeChallenge(String verifier) {
   final digest = sha256.convert(utf8.encode(verifier));
   return base64UrlEncode(digest.bytes).replaceAll('=', '');
@@ -38,7 +41,10 @@ class GithubAuthService {
   final Dio _dio;
   final AppLogger _logger;
 
-  Uri buildAuthorizeUrl(String codeVerifier) {
+  Uri buildAuthorizeUrl({
+    required String codeVerifier,
+    required String state,
+  }) {
     final challenge = pkceCodeChallenge(codeVerifier);
     return Uri.https(
       'github.com',
@@ -49,6 +55,7 @@ class GithubAuthService {
         'scope': GithubConfig.scope,
         'code_challenge': challenge,
         'code_challenge_method': 'S256',
+        'state': state,
       },
     );
   }
@@ -61,11 +68,13 @@ class GithubAuthService {
       );
     }
     final verifier = generatePkceCodeVerifier();
+    final state = generateOAuthState();
     await _secureStorage.writeKey(
       SecureStorageKeys.oauthCodeVerifier,
       verifier,
     );
-    final url = buildAuthorizeUrl(verifier);
+    await _secureStorage.writeKey(SecureStorageKeys.oauthState, state);
+    final url = buildAuthorizeUrl(codeVerifier: verifier, state: state);
     _logger.debug('Opening GitHub OAuth authorize URL');
     final launched = await launchUrl(url, mode: LaunchMode.externalApplication);
     if (!launched) {
@@ -77,17 +86,43 @@ class GithubAuthService {
     if (uri.scheme != 'cursormc' || uri.host != 'oauth') {
       return;
     }
+
+    final oauthError = uri.queryParameters['error'];
+    if (oauthError != null && oauthError.isNotEmpty) {
+      final description = uri.queryParameters['error_description'] ??
+          oauthError;
+      await _clearOAuthPendingKeys();
+      throw GithubOAuthFailure(description);
+    }
+
+    final returnedState = uri.queryParameters['state'];
+    final storedState =
+        await _secureStorage.readKey(SecureStorageKeys.oauthState);
+    if (returnedState == null ||
+        storedState == null ||
+        returnedState != storedState) {
+      await _clearOAuthPendingKeys();
+      throw const GithubOAuthFailure('Invalid OAuth state');
+    }
+
     final code = uri.queryParameters['code'];
     if (code == null || code.isEmpty) {
+      await _clearOAuthPendingKeys();
       throw const GithubOAuthFailure('Missing authorization code');
     }
     final verifier =
         await _secureStorage.readKey(SecureStorageKeys.oauthCodeVerifier);
     if (verifier == null || verifier.isEmpty) {
+      await _clearOAuthPendingKeys();
       throw const GithubOAuthFailure('Missing PKCE verifier');
     }
     await _exchangeCode(code, verifier);
+    await _clearOAuthPendingKeys();
+  }
+
+  Future<void> _clearOAuthPendingKeys() async {
     await _secureStorage.deleteKey(SecureStorageKeys.oauthCodeVerifier);
+    await _secureStorage.deleteKey(SecureStorageKeys.oauthState);
   }
 
   Future<void> _exchangeCode(String code, String verifier) async {
