@@ -1,12 +1,10 @@
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:cursor_mobile_commander/app/routes.dart';
-import 'package:cursor_mobile_commander/core/database/app_database.dart';
-import 'package:cursor_mobile_commander/core/database/database_provider.dart';
-import 'package:cursor_mobile_commander/features/onboarding/presentation/onboarding_provider.dart';
+import 'package:cursor_mobile_commander/features/projects/domain/project_failure.dart';
+import 'package:cursor_mobile_commander/features/projects/presentation/projects_provider.dart';
 import 'package:cursor_mobile_commander/shared/constants/sizes.dart';
 
 /// Manual repository URL entry (GitHub API list deferred to Sprint 3/5).
@@ -22,7 +20,6 @@ class _PinRepoScreenState extends ConsumerState<PinRepoScreen> {
     text: 'https://github.com/',
   );
   final _branchController = TextEditingController(text: 'main');
-  String? _error;
 
   @override
   void dispose() {
@@ -32,40 +29,26 @@ class _PinRepoScreenState extends ConsumerState<PinRepoScreen> {
   }
 
   Future<void> _pinRepo() async {
-    final url = _urlController.text.trim();
-    final uri = Uri.tryParse(url);
-    if (uri == null || !uri.host.contains('github.com')) {
-      setState(() => _error = 'Enter a valid GitHub repository URL');
-      return;
-    }
-    final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
-    if (segments.length < 2) {
-      setState(() => _error = 'URL must be https://github.com/owner/repo');
-      return;
-    }
-    final owner = segments[0];
-    final name = segments[1];
-    final db = await ref.read(appDatabaseFutureProvider.future);
-    await db.into(db.pinnedProjects).insertOnConflictUpdate(
-          PinnedProjectsCompanion.insert(
-            id: '$owner/$name',
-            repoUrl: url,
-            owner: owner,
-            name: name,
-            defaultBranch: _branchController.text.trim().isEmpty
-                ? 'main'
-                : _branchController.text.trim(),
-            sortOrder: const Value(0),
-          ),
+    final ok = await ref.read(pinRepoProvider.notifier).pinFromUrl(
+          repoUrl: _urlController.text,
+          defaultBranch: _branchController.text,
         );
-    ref.invalidate(pinnedProjectCountProvider);
-    if (mounted) {
+    if (ok && mounted) {
       context.go(Routes.firstAgent);
     }
   }
 
+  String _failureMessage(ProjectFailure failure) {
+    return switch (failure) {
+      InvalidRepoUrlFailure(:final message) => message,
+      ProjectStorageFailure(:final message) => message,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
+    final pinState = ref.watch(pinRepoProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Pin Repository')),
       body: Padding(
@@ -93,13 +76,20 @@ class _PinRepoScreenState extends ConsumerState<PinRepoScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            if (_error != null) ...[
-              const SizedBox(height: AppSizes.paddingSmall),
-              Text(_error!, style: const TextStyle(color: Colors.red)),
-            ],
+            if (pinState case AsyncData(:final value))
+              value.fold(
+                () => const SizedBox.shrink(),
+                (failure) => Padding(
+                  padding: const EdgeInsets.only(top: AppSizes.paddingSmall),
+                  child: Text(
+                    _failureMessage(failure),
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
             const Spacer(),
             FilledButton(
-              onPressed: _pinRepo,
+              onPressed: pinState.isLoading ? null : _pinRepo,
               child: const Text('Pin repository'),
             ),
             TextButton(
