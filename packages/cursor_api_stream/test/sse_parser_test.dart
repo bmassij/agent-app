@@ -63,4 +63,40 @@ void main() {
     final events = await future;
     expect(events.single, isA<AssistantDeltaEvent>());
   });
+
+  test('parses thinking status interaction and result events', () {
+    final events = parser.parseChunk(
+      'event: thinking\n'
+      'data: {"delta":"hmm"}\n\n'
+      'event: status\n'
+      'data: {"status":"running"}\n\n'
+      'event: interaction_update\n'
+      'data: {"kind":"approval"}\n\n'
+      'event: result\n'
+      'data: {"text":"done"}\n\n',
+    );
+    expect(events[0], isA<ThinkingDeltaEvent>());
+    expect(events[1], isA<StatusEvent>());
+    expect(events[2], isA<InteractionUpdateEvent>());
+    expect(events[3], isA<ResultEvent>());
+  });
+
+  test('done event without data body', () {
+    final events = parser.parseChunk('event: done\n\n');
+    expect(events.single, isA<DoneEvent>());
+  });
+
+  test('invalid json becomes UnknownSseEvent', () {
+    final events = parser.parseChunk(
+      'event: assistant\n'
+      'data: not-json\n\n',
+    );
+    expect(events.single, isA<UnknownSseEvent>());
+  });
+
+  test('parse stream flushes trailing block', () async {
+    final events =
+        await parser.parse(Stream.value('event: done\ndata: {}\n\n')).toList();
+    expect(events.single, isA<DoneEvent>());
+  });
 }

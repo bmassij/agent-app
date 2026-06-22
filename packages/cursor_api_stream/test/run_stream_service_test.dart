@@ -28,13 +28,54 @@ void main() {
     final events = await service
         .parseRawStream(
           Stream.value(
-            'event: assistant\ndata: {"delta":"ok"}\n\n',
+            'event: assistant\ndata: {"delta":"ok"}\n\n'
+            'event: done\ndata: {}\n\n',
           ),
           agentId: 'a1',
           runId: 'r1',
         )
         .toList();
-    expect(events.single, isA<AssistantDeltaEvent>());
+    expect(events.first, isA<AssistantDeltaEvent>());
+    expect(events.last, isA<DoneEvent>());
     expect(logger.loggedLines, isNotEmpty);
+    expect(service.reconnectionManager.state, StreamConnectionState.connected);
+  });
+
+  test('streamUri and streamHeaders include last event id', () {
+    final service = RunStreamService(apiKey: 'cursor_key');
+    final uri = service.streamUri('a1', 'r1', lastEventId: 'evt-9');
+    expect(uri.path, contains('/agents/a1/runs/r1/stream'));
+    expect(uri.queryParameters['lastEventId'], 'evt-9');
+
+    final headers = service.streamHeaders(lastEventId: 'evt-9');
+    expect(headers['Authorization'], 'Bearer cursor_key');
+    expect(headers['Last-Event-ID'], 'evt-9');
+    expect(headers['Accept'], 'text/event-stream');
+  });
+
+  test('SseEventLogger logChunk splits lines', () {
+    final lines = <String>[];
+    final logger = SseEventLogger(sink: lines.add);
+    logger.logChunk('event: status\ndata: {}\n');
+    expect(lines, isNotEmpty);
+  });
+
+  test('SseEventLogger disabled and clear', () {
+    final lines = <String>[];
+    final logger = SseEventLogger(enabled: false, sink: lines.add);
+    logger.logRawLine('event: x');
+    expect(lines, isEmpty);
+    logger.clear();
+    expect(logger.loggedLines, isEmpty);
+  });
+
+  test('RunStreamTracker tracks error events as terminal', () {
+    final tracker = RunStreamTracker(agentId: 'a1', runId: 'r1');
+    tracker.record(
+      const ErrorEvent(code: 'x', message: 'fail', id: 'e1'),
+    );
+    expect(tracker.isComplete, isTrue);
+    expect(tracker.lastEventId, 'e1');
+    expect(tracker.toSnapshot()['sequenceIndex'], 1);
   });
 }

@@ -40,8 +40,10 @@ void main() {
 
     setUp(() {
       dio = _MockDio();
-      when(() => dio.options).thenReturn(BaseOptions(baseUrl: 'https://api.github.com'));
-      repo = GithubRepositoryImpl(GithubHttpClient(accessToken: 'gho_test', dio: dio));
+      when(() => dio.options)
+          .thenReturn(BaseOptions(baseUrl: 'https://api.github.com'));
+      repo = GithubRepositoryImpl(
+          GithubHttpClient(accessToken: 'gho_test', dio: dio));
     });
 
     test('listUserRepos returns repos', () async {
@@ -55,7 +57,10 @@ void main() {
         (_) async => Response(
           requestOptions: RequestOptions(path: '/user/repos'),
           data: [
-            {'full_name': 'org/repo', 'html_url': 'https://github.com/org/repo'},
+            {
+              'full_name': 'org/repo',
+              'html_url': 'https://github.com/org/repo'
+            },
           ],
           headers: Headers.fromMap({
             'x-ratelimit-remaining': ['100'],

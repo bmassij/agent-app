@@ -27,4 +27,19 @@ void main() {
     expect(manager.attempt, 0);
     expect(manager.nextDelay(), const Duration(seconds: 1));
   });
+
+  test('markDisconnected keeps expired state', () {
+    final manager = ReconnectionManager();
+    manager.nextDelay(streamExpired: true);
+    manager.markDisconnected();
+    expect(manager.state, StreamConnectionState.expired);
+  });
+
+  test('reset clears state', () {
+    final manager = ReconnectionManager();
+    manager.nextDelay();
+    manager.reset();
+    expect(manager.state, StreamConnectionState.disconnected);
+    expect(manager.attempt, 0);
+  });
 }

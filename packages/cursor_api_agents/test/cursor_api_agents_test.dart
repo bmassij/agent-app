@@ -1,6 +1,5 @@
 import 'package:cursor_api_core/cursor_api_core.dart';
 import 'package:dio/dio.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:test/test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -19,9 +18,11 @@ void main() {
 
   setUp(() {
     dio = _MockDio();
-    when(() => dio.options).thenReturn(BaseOptions(baseUrl: 'https://api.cursor.com/v1'));
+    when(() => dio.options)
+        .thenReturn(BaseOptions(baseUrl: 'https://api.cursor.com/v1'));
     when(() => dio.interceptors).thenReturn(Interceptors());
-    repo = AgentRepositoryImpl(CursorHttpClient(apiKey: 'cursor_test', dio: dio));
+    repo =
+        AgentRepositoryImpl(CursorHttpClient(apiKey: 'cursor_test', dio: dio));
   });
 
   test('listAgents returns agents on success', () async {
