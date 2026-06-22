@@ -9,6 +9,7 @@ void main() {
     test('sends unauthenticated users to onboarding', () {
       final result = authRedirect(
         auth: const AsyncData(false),
+        onboarding: const AsyncData(false),
         location: Routes.homeProjects,
       );
 
@@ -18,15 +19,27 @@ void main() {
     test('allows onboarding routes when unauthenticated', () {
       final result = authRedirect(
         auth: const AsyncData(false),
+        onboarding: const AsyncData(false),
         location: Routes.connectCursor,
       );
 
       expect(result, isNull);
     });
 
-    test('sends authenticated users away from onboarding', () {
+    test('sends authenticated incomplete onboarding to connect cursor', () {
       final result = authRedirect(
         auth: const AsyncData(true),
+        onboarding: const AsyncData(false),
+        location: Routes.homeProjects,
+      );
+
+      expect(result, Routes.connectCursor);
+    });
+
+    test('sends authenticated completed users away from onboarding', () {
+      final result = authRedirect(
+        auth: const AsyncData(true),
+        onboarding: const AsyncData(true),
         location: Routes.onboarding,
       );
 
@@ -36,6 +49,7 @@ void main() {
     test('redirects /home to projects tab', () {
       final result = authRedirect(
         auth: const AsyncData(true),
+        onboarding: const AsyncData(true),
         location: Routes.home,
       );
 
@@ -45,6 +59,7 @@ void main() {
     test('returns null while auth is loading', () {
       final result = authRedirect(
         auth: const AsyncLoading(),
+        onboarding: const AsyncData(false),
         location: Routes.homeProjects,
       );
 
