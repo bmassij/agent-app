@@ -66,5 +66,16 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>cursormc</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.cursormobilecommander.oauth</string>
+		</dict>
+	</array>
 </dict>
 </plist>
