@@ -128,8 +128,6 @@ When a backend is added:
 
 **Release:** `v0.2.0` (2026-06-22) — includes audit remediation
 
-**Next:** Sprint 3 — API Packages
-
 ### Audit Remediation (2026-06-22) ✅
 
 **Status:** Complete — tagged `v0.2.0`
@@ -143,13 +141,22 @@ When a backend is added:
 
 See `AUDIT_REMEDIATION_REPORT.md` and `SPRINT2_FINAL_HANDOFF.md`.
 
-**Next:** Sprint 3 — API Packages
-
-### Sprint 3 — API Packages (in progress)
+### Sprint 3 — API Packages ✅
 
 **Goal:** All four API packages implemented with unit tests; app can call Cursor and GitHub APIs.
 
-**Status:** In progress
+**Status:** Complete (2026-06-22)
+
+- [x] `cursor_api_core` — HTTP client, errors, `/v1/me`
+- [x] `cursor_api_agents` — 11 operations, models, failure mapping
+- [x] `cursor_api_stream` — SSE parser, logger, reconnection, run tracker
+- [x] `github_api` — REST client, rate limiter, repository
+- [x] Mobile auth wired to `cursor_api_core`
+- [x] **126 tests** green (`melos run test`)
+
+See `SPRINT3_COMPLETION_REPORT.md`.
+
+**Next:** Sprint 4 — Core Chat
 
 ### v1.0.0 (planned)
 - Initial release
