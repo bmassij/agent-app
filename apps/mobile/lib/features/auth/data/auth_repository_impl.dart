@@ -10,7 +10,6 @@ import 'package:cursor_mobile_commander/core/storage/secure_storage_keys.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_service.dart';
 import 'package:cursor_mobile_commander/features/auth/data/auth_remote_source.dart';
 import 'package:cursor_mobile_commander/features/auth/domain/auth_failure.dart';
-import 'package:cursor_mobile_commander/features/auth/domain/auth_model.dart';
 import 'package:cursor_mobile_commander/features/auth/domain/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
