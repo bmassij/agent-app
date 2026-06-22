@@ -111,7 +111,22 @@ When a backend is added:
 - [x] `flutter run` — requires Flutter SDK; platform folders generated
 - [x] `melos run lint` / `melos run test` / `melos run build-check` verified
 
-**Next:** Sprint 2 — Auth + Database
+**Next:** Sprint 3 — API Packages
+
+### Sprint 2 — Auth + Database (2026-06-22) ✅
+
+**Status:** Complete
+
+- [x] Drift database — 10 tables, migration `0001_initial`, `AppDatabase`, codegen
+- [x] Secure storage integration — API key, GitHub token, PKCE verifier keys
+- [x] Cursor API key onboarding — paste, validate via `GET /v1/me`, QR scan
+- [x] Biometric authentication — opt-in during onboarding, app unlock gate
+- [x] GitHub OAuth PKCE — browser flow, deep link `cursormc://oauth/callback`
+- [x] Onboarding flow wired — connect Cursor → GitHub → pin repo → biometrics → home
+- [x] Unit/widget tests — database, auth repository, PKCE, QR parser, router updates
+- [x] `flutter analyze` — 0 issues; **34 tests** passing in `apps/mobile`
+
+**Next:** Sprint 3 — API Packages
 
 ### v1.0.0 (planned)
 - Initial release

@@ -1,42 +1,43 @@
-# Sprint 1 — Implementation Notes
+# Sprint 2 — Implementation Notes
 
 **Status:** Complete  
 **Date:** 2026-06-22  
-**Scope:** Foundation — monorepo, app shell, navigation, theme, package scaffolds
+**Scope:** Auth + Database — Drift, secure storage, onboarding, biometrics, GitHub OAuth PKCE
 
 ---
 
 ## What Was Built
 
-### Monorepo (S1.1)
-- [`melos.yaml`](../melos.yaml) — bootstrap, lint, test, codegen, build-check scripts
-- [`analysis_options.yaml`](../analysis_options.yaml) — shared strict lint rules
-- [`.gitignore`](../.gitignore) — Flutter/Dart/secrets exclusions
-- [`apps/mobile/pubspec.yaml`](../apps/mobile/pubspec.yaml) — full dependency list per PHASE7
+### Drift Database (`core/database/`)
+- 10 tables per PHASE7: `user_settings`, `pinned_projects`, `agent_sessions`, `run_records`, `chat_messages`, `tool_call_logs`, `usage_records`, `github_cache`, `diff_cache`, `queued_prompts`
+- `AppDatabase` with `open()`, `inMemory()`, `getOrCreateSettings()`
+- Migration `migrations/0001_initial.dart` (schema version 1)
+- `database_provider.dart` — `appDatabaseFutureProvider`
+- Codegen: `app_database.g.dart` (run `melos run codegen` after table changes)
 
-### App Shell (S1.2)
-- Dark theme ([`app/theme.dart`](../apps/mobile/lib/app/theme.dart))
-- Route constants ([`app/routes.dart`](../apps/mobile/lib/app/routes.dart)) — full PHASE2 route tree
-- GoRouter with auth guard ([`app/router.dart`](../apps/mobile/lib/app/router.dart))
-- Auth session provider checking `cursor_api_key` in secure storage
-- Home shell with 3-tab bottom navigation (Projects, Agents, Settings)
-- Onboarding placeholder screens (5 steps)
-- Shared widgets: `LoadingSpinner`, `ErrorView`, `OfflineBanner`, `AppBottomNav`
-- Shared constants: `AppColors`, `AppSizes`
+### Auth Feature (`features/auth/`)
+- Domain: `CursorMeModel`, sealed `AuthFailure`, `AuthRepository` interface
+- Data: `AuthRemoteSource` (`GET /v1/me`), `AuthRepositoryImpl`, `GithubAuthService` (PKCE)
+- Presentation: `auth_provider.dart`, `key_setup_screen.dart`, `biometric_screen.dart`, `qr_scanner_widget.dart`
+- Secure storage keys: `cursor_api_key`, `github_access_token`, `oauth_code_verifier`
 
-### Package Scaffolds (S1.3)
-- `packages/cursor_api_core` — TODO barrel + placeholder test
-- `packages/cursor_api_agents` — TODO barrel + placeholder test
-- `packages/cursor_api_stream` — TODO barrel + placeholder test
-- `packages/github_api` — TODO barrel + placeholder test
+### Onboarding (`features/onboarding/`)
+- `onboarding_provider.dart` — completion flag in `user_settings`, GitHub/pin/biometric step providers
+- Wired screens: connect Cursor (manual + QR), connect GitHub, pin repo URL, biometric opt-in
+- Router `authRedirect()` — unauthenticated → onboarding; authenticated incomplete → connect Cursor; completed → home
 
-### Tests
-- Route constant tests
-- `authRedirect` unit tests
-- Auth session provider tests (in-memory secure storage)
-- Shared widget tests
-- Welcome screen widget test
-- Router widget tests (onboarding redirect + authenticated home)
+### App Integration
+- `main.dart` — opens DB, overrides `appDatabaseFutureProvider`
+- `app.dart` — biometric unlock gate, `app_links` OAuth callback handler
+- Deep links: Android `cursormc://oauth`, iOS URL scheme `cursormc`
+- `tools/generate_key_qr.dart` — desktop helper for `cursormc://auth?key=...` QR payloads
+
+### Tests Added (17 new → 34 total in `apps/mobile`)
+- `test/core/database/app_database_test.dart`
+- `test/features/auth/auth_repository_impl_test.dart`
+- `test/features/auth/github_auth_service_test.dart`
+- `test/features/auth/qr_scanner_widget_test.dart`
+- Updated router/auth session tests for onboarding + DB providers
 
 ---
 
@@ -45,71 +46,60 @@
 ```bash
 cd cursor-mobile-commander
 melos bootstrap
+melos run codegen   # if *.g.dart missing
 
-# First time only — generate platform folders if missing:
 cd apps/mobile
-flutter create . --org com.cursormobilecommander --project-name cursor_mobile_commander
-cd ../..
+flutter run --dart-define=GITHUB_CLIENT_ID=your_oauth_app_id
 
-melos run lint
-melos run test
-melos run build-check   # requires Android SDK
-flutter run             # from apps/mobile
+# Tests + lint
+flutter analyze
+flutter test
 ```
 
 ---
 
-## Auth Guard Behavior (Sprint 1)
+## Auth Guard Behavior (Sprint 2)
 
-- Reads `cursor_api_key` from `flutter_secure_storage` (no validation yet)
-- Unauthenticated → `/onboarding`
-- Authenticated → `/home/projects`
-- Sprint 2 adds `GET /v1/me` validation and key setup UI
+1. No API key → `/onboarding` (welcome)
+2. API key stored → validate presence via secure storage (`authSessionProvider`)
+3. Key setup validates with live `GET /v1/me` before persisting
+4. Onboarding incomplete → redirect to `/onboarding/connect-cursor`
+5. Biometric enabled → `BiometricScreen` gate on cold start until unlock
+6. GitHub OAuth → external browser, callback via `cursormc://oauth/callback`
 
 ---
 
-## Known Gaps (By Design — Sprint 2+)
+## Known Gaps (By Design — Sprint 3+)
 
 | Item | Sprint |
 |---|---|
-| API key paste / QR scan UI | Sprint 2 |
-| Biometric lock | Sprint 2 |
-| GitHub OAuth | Sprint 2 |
-| Drift database | Sprint 2 |
-| Cursor/GitHub API clients | Sprint 3 |
+| Cursor/GitHub API client packages | Sprint 3 |
 | Chat streaming | Sprint 4 |
-
----
-
-## Dependency Resolution (Sprint 1)
-
-PHASE7 dependency versions required minor bumps for Dart 3.12 compatibility:
-
-- `speech_to_text`: ^6.6.2 → ^7.4.0
-- `share_plus`: ^9.0.0 → ^12.0.2
-- `flutter_secure_storage`: ^9.0.0 → ^9.2.4
-
-Root `pubspec.yaml` added with `melos: ^6.3.2` (Melos 6 uses `melos.yaml`; Melos 7+ requires pub workspaces migration).
+| Real repo browser / GitHub API for pin | Sprint 5 |
+| Connectivity service (real offline detection) | Sprint 6 |
 
 ---
 
 ## Verification (2026-06-22)
 
 ```
-melos bootstrap   ✅
-melos run lint    ✅ (0 issues)
-melos run test    ✅ (17 tests)
-melos run build-check ✅
+flutter analyze (apps/mobile)   ✅ 0 issues
+flutter test (apps/mobile)      ✅ 34 tests
 ```
-
-**Windows note:** Enable Developer Mode for plugin symlink support during `flutter pub get`.
 
 ---
 
-## Handoff Notes for Sprint 2
+## Handoff Notes for Sprint 3
 
-1. Run `melos bootstrap && melos run lint && melos run test` first.
-2. `SecureStorageService` is an abstract interface — extend, do not replace.
-3. `authRedirect()` in `router.dart` is unit-tested — update tests if guard logic changes.
-4. Onboarding screens exist as navigation stubs — wire to real auth flows.
-5. If `flutter create` was not run, platform folders may be missing — run before `flutter run`.
+1. Run `melos bootstrap && melos run codegen` before starting.
+2. Move `AuthRemoteSource` logic into `packages/cursor_api_core` — do not duplicate HTTP client setup.
+3. `AuthRepositoryImpl` and onboarding screens are ready; agents/projects will consume `AppDatabase` tables.
+4. GitHub token is in secure storage; `github_api` package should read via injected storage abstraction.
+5. Before `SseParser`: make one real Cursor API call and log raw SSE (per MASTER_BUILD_PLAN).
+6. Do not modify migration `0001_initial.dart` after merge — add `0002_*.dart` for schema changes.
+
+---
+
+## Sprint 1 Notes
+
+See prior sections in git history / `SPRINT1_COMPLETION_REPORT.md` for foundation details.

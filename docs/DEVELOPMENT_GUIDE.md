@@ -74,12 +74,43 @@ There is no `.env` file. All secrets are entered by the user at runtime and stor
 
 For development, use your own Cursor API key and a personal GitHub account.
 
+### Cursor API key
+
 ```bash
 # Generate QR code for easy key transfer to device
 cd tools
 dart run generate_key_qr.dart --key=YOUR_CURSOR_API_KEY
-# Scan the printed QR code in the app
+# Scan the printed QR code in the app (Connect Cursor → Scan QR)
 ```
+
+You can also paste the key directly in **Connect Cursor → Enter key manually**. The app validates it with `GET /v1/me` before saving to secure storage.
+
+### GitHub OAuth (PKCE)
+
+Register a GitHub OAuth App with:
+
+| Setting | Value |
+|---|---|
+| Authorization callback URL | `cursormc://oauth/callback` |
+
+Build or run with your OAuth client ID (no client secret on device):
+
+```bash
+cd apps/mobile
+flutter run --dart-define=GITHUB_CLIENT_ID=your_github_oauth_app_client_id
+```
+
+Deep links are configured in `AndroidManifest.xml` (`cursormc://oauth`) and iOS `Info.plist` (`CFBundleURLTypes`).
+
+### Drift codegen
+
+After changing database tables:
+
+```bash
+melos run codegen
+```
+
+Commit generated `*.g.dart` files with your changes.
 
 ---
 

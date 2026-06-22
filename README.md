@@ -36,4 +36,6 @@ cd apps/mobile && flutter run
 
 **Sprint 1 (Foundation):** Complete — app shell, navigation, theme, package scaffolds.
 
-**Sprint 2 (Auth + Database):** Next — API key setup, biometrics, Drift, GitHub OAuth.
+**Sprint 2 (Auth + Database):** Complete — Drift DB, API key setup, biometrics, GitHub OAuth PKCE, onboarding wired.
+
+**Sprint 3 (API Packages):** Next — Cursor/GitHub API client packages.
