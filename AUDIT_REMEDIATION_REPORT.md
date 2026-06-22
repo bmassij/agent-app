@@ -155,11 +155,11 @@ Per instructions, only Critical and High findings were remediated. The following
 
 Remediation is committed separately from Sprint 3 work:
 
-1. `fix(ios): add face id and camera privacy usage descriptions`
-2. `fix(auth): validate session on launch and harden oauth state`
-3. `refactor(projects): extract pin repository from onboarding ui`
-4. `test(mobile): cover audit remediation for auth and onboarding`
-5. `docs: audit remediation report and security guide updates`
+1. `62f3d9f` — `fix(ios): add face id and camera privacy usage descriptions`
+2. `830fc53` — `fix(auth): validate session on launch and harden oauth state`
+3. `37554d2` — `refactor(projects): extract pin repository from onboarding ui`
+4. `ecaf39d` — `test(mobile): cover audit remediation for auth and onboarding`
+5. `8476e9d` — `docs: audit remediation report and security guide updates`
 
 ---
 
