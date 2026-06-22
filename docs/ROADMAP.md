@@ -124,9 +124,32 @@ When a backend is added:
 - [x] GitHub OAuth PKCE — browser flow, deep link `cursormc://oauth/callback`
 - [x] Onboarding flow wired — connect Cursor → GitHub → pin repo → biometrics → home
 - [x] Unit/widget tests — database, auth repository, PKCE, QR parser, router updates
-- [x] `flutter analyze` — 0 issues; **34 tests** passing in `apps/mobile`
+- [x] `flutter analyze` — 0 issues; **50 tests** passing after audit remediation
+
+**Release:** `v0.2.0` (2026-06-22) — includes audit remediation
 
 **Next:** Sprint 3 — API Packages
+
+### Audit Remediation (2026-06-22) ✅
+
+**Status:** Complete — tagged `v0.2.0`
+
+- [x] iOS privacy strings (Face ID, camera)
+- [x] Session re-validation via `GET /v1/me` on launch
+- [x] GitHub OAuth `state` CSRF parameter
+- [x] Widget tests for all Sprint 2 auth/onboarding screens
+- [x] `ProjectRepository` for pin-repo persistence
+- [x] **50 tests** passing in `apps/mobile`
+
+See `AUDIT_REMEDIATION_REPORT.md` and `SPRINT2_FINAL_HANDOFF.md`.
+
+**Next:** Sprint 3 — API Packages
+
+### Sprint 3 — API Packages (in progress)
+
+**Goal:** All four API packages implemented with unit tests; app can call Cursor and GitHub APIs.
+
+**Status:** In progress
 
 ### v1.0.0 (planned)
 - Initial release
