@@ -3,8 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:cursor_mobile_commander/app/routes.dart';
+import 'package:cursor_mobile_commander/features/agents/presentation/agent_detail_screen.dart';
 import 'package:cursor_mobile_commander/features/agents/presentation/agent_list_screen.dart';
 import 'package:cursor_mobile_commander/features/auth/presentation/auth_provider.dart';
+import 'package:cursor_mobile_commander/features/chat/presentation/chat_screen.dart';
+import 'package:cursor_mobile_commander/features/chat/presentation/new_agent_screen.dart';
+import 'package:cursor_mobile_commander/features/tasks/presentation/run_logs_screen.dart';
 import 'package:cursor_mobile_commander/features/auth/presentation/key_setup_screen.dart';
 import 'package:cursor_mobile_commander/features/home/presentation/home_shell_screen.dart';
 import 'package:cursor_mobile_commander/features/onboarding/presentation/connect_cursor_screen.dart';
@@ -140,26 +144,25 @@ final routerProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'new',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: 'New Agent'),
+                    builder: (context, state) => const NewAgentScreen(),
                   ),
                   GoRoute(
                     path: ':agentId',
-                    builder: (context, state) => PlaceholderScreen(
-                      title: 'Agent ${state.pathParameters['agentId']}',
+                    builder: (context, state) => AgentDetailScreen(
+                      agentId: state.pathParameters['agentId']!,
                     ),
                     routes: [
                       GoRoute(
                         path: 'chat',
-                        builder: (context, state) => const PlaceholderScreen(
-                          title: 'Chat',
+                        builder: (context, state) => ChatScreen(
+                          agentId: state.pathParameters['agentId']!,
                         ),
                         routes: [
                           GoRoute(
                             path: 'run/:runId/logs',
-                            builder: (context, state) => PlaceholderScreen(
-                              title:
-                                  'Run ${state.pathParameters['runId']} Logs',
+                            builder: (context, state) => RunLogsScreen(
+                              agentId: state.pathParameters['agentId']!,
+                              runId: state.pathParameters['runId']!,
                             ),
                           ),
                         ],
