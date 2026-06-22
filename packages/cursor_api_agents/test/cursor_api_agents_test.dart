@@ -1,5 +1,6 @@
 import 'package:cursor_api_core/cursor_api_core.dart';
 import 'package:dio/dio.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:test/test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -106,6 +107,9 @@ void main() {
     ).thenAnswer((_) async => _jsonResponse({}));
 
     final result = await repo.cancelRun('a1', 'r1');
-    expect(result.isRight(), isTrue);
+    result.fold(
+      (_) => fail('expected right'),
+      (_) {},
+    );
   });
 }

@@ -48,6 +48,17 @@ class CursorHttpClient {
     return _get<T>(path, queryParameters: queryParameters, parser: parser);
   }
 
+  Future<void> postVoid(
+    String path, {
+    Object? data,
+  }) async {
+    try {
+      await _dio.post<dynamic>(path, data: data);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
+
   Future<T> post<T>(
     String path, {
     Object? data,

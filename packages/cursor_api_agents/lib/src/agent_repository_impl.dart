@@ -112,9 +112,7 @@ class AgentRepositoryImpl implements AgentRepository {
     String runId,
   ) {
     return _guard(() async {
-      await _client.post<Map<String, dynamic>>(
-        '/agents/$agentId/runs/$runId/cancel',
-      );
+      await _client.postVoid('/agents/$agentId/runs/$runId/cancel');
       return unit;
     });
   }

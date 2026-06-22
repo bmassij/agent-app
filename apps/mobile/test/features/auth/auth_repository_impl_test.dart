@@ -1,3 +1,4 @@
+import 'package:cursor_api_core/cursor_api_core.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -67,6 +68,16 @@ void main() {
     result.fold(
       (_) => fail('expected right'),
       (value) => expect(value, me),
+    );
+  });
+
+  test('validateCursorKey maps CursorAuthError to InvalidKeyFailure', () async {
+    when(() => remote.fetchMe(any())).thenThrow(const CursorAuthError());
+
+    final result = await repo().validateCursorKey('cursor_bad');
+    result.fold(
+      (failure) => expect(failure, isA<InvalidKeyFailure>()),
+      (_) => fail('expected left'),
     );
   });
 

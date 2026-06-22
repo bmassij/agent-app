@@ -47,7 +47,11 @@ class RunStreamService {
             },
           ),
         )
-        .asyncExpand(_parser.parse)
+        .asyncExpand((chunk) async* {
+          for (final event in _parser.parseChunk(chunk)) {
+            yield event;
+          }
+        })
         .map((event) {
           tracker.record(event);
           if (event is DoneEvent) {

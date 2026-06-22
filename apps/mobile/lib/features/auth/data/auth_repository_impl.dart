@@ -1,3 +1,4 @@
+import 'package:cursor_api_core/cursor_api_core.dart';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:fpdart/fpdart.dart';
@@ -67,6 +68,14 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final me = await _remote.fetchMe(trimmed);
       return right(me);
+    } on CursorAuthError {
+      return left(const InvalidKeyFailure());
+    } on CursorApiError catch (e) {
+      if (e is CursorNetworkError) {
+        return left(NetworkFailure(e.message));
+      }
+      _logger.error('validateCursorKey api error', error: e);
+      return left(NetworkFailure(e.toString()));
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         return left(const InvalidKeyFailure());
