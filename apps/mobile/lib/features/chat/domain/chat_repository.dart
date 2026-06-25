@@ -1,12 +1,11 @@
-import 'package:cursor_api_stream/cursor_api_stream.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:cursor_api_agents/cursor_api_agents.dart' show AgentFailure;
-
+import 'package:cursor_mobile_commander/features/agents/domain/agent_failure.dart';
 import 'package:cursor_mobile_commander/features/chat/domain/chat_message_model.dart';
 import 'package:cursor_mobile_commander/features/chat/domain/tool_call_model.dart';
 
-/// Chat history, streaming, and SSE persistence.
+/// Chat history, streaming, and task event persistence.
 abstract interface class ChatRepository {
   Stream<List<ChatMessageModel>> watchMessagesForAgent(String agentId);
 
@@ -17,16 +16,16 @@ abstract interface class ChatRepository {
     required String content,
   });
 
-  Stream<SseEvent> streamRun({
+  Stream<TaskStreamEvent> streamRun({
     required String agentId,
     required String runId,
     String? lastEventId,
   });
 
-  Future<void> persistSseEvent({
+  Future<void> persistStreamEvent({
     required String agentId,
     required String runId,
-    required SseEvent event,
+    required TaskStreamEvent event,
   });
 
   Future<Either<AgentFailure, Unit>> fetchUsageForRun({

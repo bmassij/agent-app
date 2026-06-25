@@ -1,0 +1,23 @@
+name: cursor_execution_provider
+description: Cursor Cloud Agents adapter implementing Aivance ExecutionProvider.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  aivance_capabilities:
+    path: ../aivance_capabilities
+  aivance_provider_contract:
+    path: ../aivance_provider_contract
+  cursor_api_agents:
+    path: ../cursor_api_agents
+  cursor_api_stream:
+    path: ../cursor_api_stream
+  fpdart: ^1.1.0
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  mocktail: ^1.0.3
+  test: ^1.25.0

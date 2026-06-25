@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:cursor_api_agents/cursor_api_agents.dart';
-import 'package:cursor_api_stream/cursor_api_stream.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:cursor_mobile_commander/core/config/feature_flags.dart';
 import 'package:cursor_mobile_commander/core/network/connectivity_service.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_keys.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_service.dart';
+import 'package:cursor_mobile_commander/features/agents/domain/agent_failure.dart';
 import 'package:cursor_mobile_commander/features/agents/presentation/agents_provider.dart';
 import 'package:cursor_mobile_commander/features/chat/domain/chat_message_model.dart';
 import 'package:cursor_mobile_commander/features/chat/domain/tool_call_model.dart';
@@ -29,23 +29,23 @@ final toolCallsProvider =
 
 /// Active SSE subscription for a run.
 final runStreamProvider =
-    StreamProvider.family<SseEvent, RunStreamKey>((ref, key) async* {
+    StreamProvider.family<TaskStreamEvent, RunStreamKey>((ref, key) async* {
   final repo = await ref.watch(chatRepositoryProvider.future);
   await for (final event in repo.streamRun(
     agentId: key.agentId,
     runId: key.runId,
     lastEventId: key.lastEventId,
   )) {
-    await repo.persistSseEvent(
+    await repo.persistStreamEvent(
       agentId: key.agentId,
       runId: key.runId,
       event: event,
     );
-    if (event is DoneEvent) {
+    if (event is DoneStreamEvent) {
       await repo.fetchUsageForRun(agentId: key.agentId, runId: key.runId);
     }
     yield event;
-    if (event is DoneEvent || event is ErrorEvent) {
+    if (event is DoneStreamEvent || event is ErrorStreamEvent) {
       break;
     }
   }
@@ -151,7 +151,7 @@ final agentChatProvider =
 );
 
 class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
-  StreamSubscription<SseEvent>? _subscription;
+  StreamSubscription<TaskStreamEvent>? _subscription;
 
   @override
   Future<void> build(String agentId) async {
@@ -180,7 +180,7 @@ class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
       (_, next) {
         next.whenOrNull(
           data: (event) {
-            if (event is DoneEvent) {
+            if (event is DoneStreamEvent) {
               ref.read(chatStateProvider(agentId).notifier).setRunActive(
                     runId: runId,
                     active: false,
@@ -194,7 +194,7 @@ class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
                       ),
                 );
               }
-            } else if (event is ErrorEvent) {
+            } else if (event is ErrorStreamEvent) {
               ref.read(chatStateProvider(agentId).notifier).setRunActive(
                     runId: runId,
                     active: false,
@@ -311,42 +311,3 @@ class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
     };
   }
 }
-
-/// Repository URLs from the Cursor API.
-final repositoriesProvider = FutureProvider<List<String>>((ref) async {
-  final repo = await ref.watch(agentRepositoryProvider.future);
-  final result = await repo.listRepositories();
-  return result.fold(
-    (failure) => throw StateError('Could not load repositories: $failure'),
-    (page) => page.repositories
-        .map((r) => RepositoryModel.normalizeRepoUrl(r.url))
-        .where((url) => url.isNotEmpty)
-        .toList(),
-  );
-});
-
-/// Preferred repo for new commands: last used, else first from API.
-final defaultRepoUrlProvider = FutureProvider<String?>((ref) async {
-  final storage = ref.watch(secureStorageServiceProvider);
-  final lastUsed = await storage.readKey(SecureStorageKeys.lastUsedRepoUrl);
-  if (lastUsed != null && lastUsed.isNotEmpty) {
-    return lastUsed;
-  }
-  final repos = await ref.watch(repositoriesProvider.future);
-  return repos.isEmpty ? null : repos.first;
-});
-
-/// Persists the last repo used for a new command.
-Future<void> saveLastUsedRepoUrl(WidgetRef ref, String repoUrl) async {
-  final storage = ref.read(secureStorageServiceProvider);
-  await storage.writeKey(SecureStorageKeys.lastUsedRepoUrl, repoUrl);
-}
-
-final modelsProvider = FutureProvider<ModelListPage>((ref) async {
-  final repo = await ref.watch(agentRepositoryProvider.future);
-  final result = await repo.listModels();
-  return result.fold(
-    (_) => const ModelListPage(models: []),
-    (page) => page,
-  );
-});

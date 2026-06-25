@@ -17,8 +17,8 @@ final orchestratorProvider = commandOrchestratorProvider;
 @Deprecated('Use cursorConnectionProvider instead. Removed in M4.')
 final cursorConnectionProvider = cursorApiKeyProvider;
 
-@Deprecated('Use executionRepositoryProvider instead. Removed in M4.')
-final executionRepositoryProvider = apiAgentRepositoryProvider;
+@Deprecated('Use executionProviderProvider instead. Removed in M4.')
+final executionRepositoryProvider = executionProviderProvider;
 
 /// Active worker count facade.
 final activeWorkersCountProvider = Provider<int>((ref) {

@@ -1,8 +1,8 @@
-# melos_managed_dependency_overrides: cursor_api_agents,cursor_api_core,github_api
+# melos_managed_dependency_overrides: aivance_provider_contract,github_api,aivance_capabilities
 dependency_overrides:
-  cursor_api_agents:
-    path: ..\\cursor_api_agents
-  cursor_api_core:
-    path: ..\\cursor_api_core
+  aivance_capabilities:
+    path: ..\\aivance_capabilities
+  aivance_provider_contract:
+    path: ..\\aivance_provider_contract
   github_api:
     path: ..\\github_api

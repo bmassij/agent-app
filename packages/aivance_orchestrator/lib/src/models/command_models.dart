@@ -1,4 +1,4 @@
-import 'package:cursor_api_agents/cursor_api_agents.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 
 /// User command before orchestration.
 class CommandInput {
@@ -26,13 +26,13 @@ class CommandInput {
   final String? branch;
   final String? prUrl;
   final int? prNumber;
-  final List<PromptImage>? images;
+  final List<TaskImage>? images;
   final String? modelId;
-  final List<ModelParam>? modelParams;
+  final List<TaskModelParam>? modelParams;
   final String? mode;
   final bool? autoCreatePr;
   final bool? workOnCurrentBranch;
-  final CloudEnvConfig? cloudEnv;
+  final TaskCloudEnv? cloudEnv;
   final Map<String, String>? envVars;
   final String? existingAgentId;
   final bool forceNewAgent;

@@ -1,4 +1,4 @@
-import 'package:cursor_api_stream/cursor_api_stream.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:cursor_mobile_commander/core/database/app_database.dart';
@@ -44,12 +44,12 @@ void main() {
     await persister.persist(
       agentId: 'a1',
       runId: 'r1',
-      event: const AssistantDeltaEvent(delta: 'Hello'),
+      event: const AssistantDeltaStreamEvent(delta: 'Hello'),
     );
     await persister.persist(
       agentId: 'a1',
       runId: 'r1',
-      event: const DoneEvent(),
+      event: const DoneStreamEvent(),
     );
 
     final messages = await db.select(db.chatMessages).get();
@@ -65,7 +65,7 @@ void main() {
       await persister.persist(
         agentId: 'a1',
         runId: 'r1',
-        event: AssistantDeltaEvent(delta: fragment),
+        event: AssistantDeltaStreamEvent(delta: fragment),
       );
     }
 
@@ -77,15 +77,15 @@ void main() {
     await persister.persist(
       agentId: 'a1',
       runId: 'r1',
-      event: const ToolCallEvent(
-        callId: 'tc1',
-        name: 'grep',
-        status: 'running',
-        args: {'pattern': 'foo'},
+      event: const ToolCallStreamEvent(
+        callId: 'c1',
+        name: 'read_file',
+        status: 'completed',
       ),
     );
 
     final tools = await db.select(db.toolCallLogs).get();
-    expect(tools.single.toolName, 'grep');
+    expect(tools, hasLength(1));
+    expect(tools.single.toolName, 'read_file');
   });
 }

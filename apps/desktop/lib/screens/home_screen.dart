@@ -1,5 +1,5 @@
 import 'package:aivance_orchestrator/aivance_orchestrator.dart';
-import 'package:cursor_api_agents/cursor_api_agents.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:cursor_commander_desktop/screens/chat_screen.dart';
 import 'package:cursor_commander_desktop/services/cursor_session.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<AgentModel> _agents = [];
+  List<TaskInfo> _agents = [];
   List<String> _repos = [];
   bool _loading = true;
   String? _error;
@@ -216,8 +216,8 @@ class _HomeScreenState extends State<HomeScreen> {
         final agent = _agents[index];
         final repo = _selectedRepo ?? (_repos.isNotEmpty ? _repos.first : '');
         return ListTile(
-          title: Text(agent.name ?? agent.agentId),
-          subtitle: Text('${agent.status} · ${agent.agentId}'),
+          title: Text(agent.name ?? agent.taskId),
+          subtitle: Text('${agent.status} · ${agent.taskId}'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () async {
             if (repo.isEmpty) {
@@ -227,10 +227,10 @@ class _HomeScreenState extends State<HomeScreen> {
               MaterialPageRoute<void>(
                 builder: (_) => ChatScreen(
                   session: widget.session,
-                  agentId: agent.agentId,
+                  agentId: agent.taskId,
                   repoUrl: repo,
                   initialRunId: agent.latestRunId,
-                  title: agent.name ?? agent.agentId,
+                  title: agent.name ?? agent.taskId,
                 ),
               ),
             );

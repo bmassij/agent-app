@@ -1,0 +1,11 @@
+name: aivance_capabilities
+description: Execution capability identifiers for Aivance Provider Engine.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  test: ^1.25.0

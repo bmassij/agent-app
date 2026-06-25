@@ -1,0 +1,17 @@
+name: aivance_provider_contract
+description: ExecutionProvider contract and registry for Aivance Provider Engine.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  aivance_capabilities:
+    path: ../aivance_capabilities
+  fpdart: ^1.1.0
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  mocktail: ^1.0.3
+  test: ^1.25.0

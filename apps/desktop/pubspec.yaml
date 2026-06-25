@@ -10,12 +10,16 @@ environment:
 dependencies:
   aivance_orchestrator:
     path: ../../packages/aivance_orchestrator
+  aivance_provider_contract:
+    path: ../../packages/aivance_provider_contract
   cursor_api_agents:
     path: ../../packages/cursor_api_agents
   cursor_api_core:
     path: ../../packages/cursor_api_core
   cursor_api_stream:
     path: ../../packages/cursor_api_stream
+  cursor_execution_provider:
+    path: ../../packages/cursor_execution_provider
   github_api:
     path: ../../packages/github_api
   flutter:

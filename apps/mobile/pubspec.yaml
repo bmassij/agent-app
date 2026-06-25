@@ -9,8 +9,12 @@ environment:
 
 dependencies:
   app_links: ^6.3.2
+  aivance_capabilities:
+    path: ../../packages/aivance_capabilities
   aivance_orchestrator:
     path: ../../packages/aivance_orchestrator
+  aivance_provider_contract:
+    path: ../../packages/aivance_provider_contract
   connectivity_plus: ^6.0.3
   crypto: ^3.0.6
   cursor_api_agents:
@@ -19,6 +23,8 @@ dependencies:
     path: ../../packages/cursor_api_core
   cursor_api_stream:
     path: ../../packages/cursor_api_stream
+  cursor_execution_provider:
+    path: ../../packages/cursor_execution_provider
   dio: ^5.4.3
   drift: ^2.18.0
   flutter:

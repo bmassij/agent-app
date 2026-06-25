@@ -4,26 +4,26 @@ import 'package:aivance_orchestrator/src/builder/prompt_builder.dart';
 import 'package:aivance_orchestrator/src/conversation/conversation_manager.dart';
 import 'package:aivance_orchestrator/src/models/command_models.dart';
 import 'package:aivance_orchestrator/src/scanner/repository_scanner.dart';
-import 'package:cursor_api_agents/cursor_api_agents.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:github_api/github_api.dart';
 
-/// Central façade: context → prompt → Cursor API.
+/// Central façade: context → prompt → execution provider dispatch.
 class AgentCommandOrchestrator {
   AgentCommandOrchestrator({
-    required AgentRepository agents,
+    required ExecutionProvider execution,
     GithubRepository? github,
     ContextBuilder? contextBuilder,
     PromptBuilder? promptBuilder,
     ConversationManager? conversationManager,
-  })  : _agents = agents,
+  })  : _execution = execution,
         _contextBuilder = contextBuilder ??
             ContextBuilder(scanner: RepositoryScanner(github: github)),
         _promptBuilder = promptBuilder ?? const PromptBuilder(),
         _conversation =
-            conversationManager ?? ConversationManager(agents: agents);
+            conversationManager ?? ConversationManager(execution: execution);
 
-  final AgentRepository _agents;
+  final ExecutionProvider _execution;
   final ContextBuilder _contextBuilder;
   final PromptBuilder _promptBuilder;
   final ConversationManager _conversation;
@@ -64,9 +64,9 @@ class AgentCommandOrchestrator {
         }
       }
 
-      final result = await _agents.createAgent(built.request);
+      final result = await _execution.executeTask(built.request);
       return result.fold(
-        (f) => left(f.toString()),
+        (f) => left(f.message),
         (created) {
           _conversation.recordDispatch(
             repoUrl: input.repoUrl,
@@ -78,7 +78,7 @@ class AgentCommandOrchestrator {
           );
           return right(
             CommandDispatchResult(
-              agentId: created.agentId,
+              agentId: created.taskId,
               runId: created.runId,
               userPrompt: input.userPrompt,
               enrichedPrompt: built.enrichedPrompt,
@@ -100,10 +100,28 @@ class AgentCommandOrchestrator {
     required BuiltCommand built,
     bool reused = false,
   }) async {
-    final runRequest = _promptBuilder.buildFollowUp(input, context);
-    final result = await _agents.createRun(agentId, runRequest);
+    final followUp = _promptBuilder.buildFollowUp(
+      CommandInput(
+        userPrompt: input.userPrompt,
+        repoUrl: input.repoUrl,
+        branch: input.branch,
+        prUrl: input.prUrl,
+        images: input.images,
+        mode: input.mode,
+        existingAgentId: agentId,
+        locale: input.locale,
+      ),
+      context,
+    );
+    final runRequest = ContinueTaskRequest(
+      taskId: agentId,
+      prompt: followUp.prompt,
+      images: followUp.images,
+      mode: followUp.mode,
+    );
+    final result = await _execution.continueTask(runRequest);
     return result.fold(
-      (f) => left(f.toString()),
+      (f) => left(f.message),
       (run) => right(
         CommandDispatchResult(
           agentId: agentId,
@@ -118,24 +136,27 @@ class AgentCommandOrchestrator {
     );
   }
 
-  Future<Either<String, List<ArtifactModel>>> fetchArtifacts(
+  Future<Either<String, List<TaskArtifactDownload>>> fetchArtifacts(
     String agentId,
   ) async {
-    final result = await _agents.listArtifacts(agentId);
-    return result.fold(
-      (f) => left(f.toString()),
-      (page) => right(page.artifacts),
-    );
+    final result = await _execution.downloadArtifacts(agentId);
+    return result.fold((f) => left(f.message), right);
   }
 
   Future<Either<String, String>> downloadArtifactUrl(
     String agentId,
     String path,
   ) async {
-    final result = await _agents.downloadArtifact(agentId, path);
+    final result = await _execution.downloadArtifacts(agentId);
     return result.fold(
-      (f) => left(f.toString()),
-      (dl) => right(dl.url),
+      (f) => left(f.message),
+      (artifacts) {
+        final match = artifacts.where((a) => a.path == path).firstOrNull;
+        if (match == null) {
+          return left('Artifact not found: $path');
+        }
+        return right(match.url);
+      },
     );
   }
 }

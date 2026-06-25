@@ -9,6 +9,20 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "103.0.0"
+  aivance_capabilities:
+    dependency: "direct overridden"
+    description:
+      path: "../aivance_capabilities"
+      relative: true
+    source: path
+    version: "0.1.0"
+  aivance_provider_contract:
+    dependency: "direct main"
+    description:
+      path: "../aivance_provider_contract"
+      relative: true
+    source: path
+    version: "0.1.0"
   analyzer:
     dependency: transitive
     description:
@@ -81,20 +95,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
-  cursor_api_agents:
-    dependency: "direct main"
-    description:
-      path: "../cursor_api_agents"
-      relative: true
-    source: path
-    version: "0.1.0"
-  cursor_api_core:
-    dependency: "direct overridden"
-    description:
-      path: "../cursor_api_core"
-      relative: true
-    source: path
-    version: "0.1.0"
   dio:
     dependency: transitive
     description:

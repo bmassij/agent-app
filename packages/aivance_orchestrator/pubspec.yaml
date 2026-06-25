@@ -7,8 +7,8 @@ environment:
   sdk: '>=3.4.0 <4.0.0'
 
 dependencies:
-  cursor_api_agents:
-    path: ../cursor_api_agents
+  aivance_provider_contract:
+    path: ../aivance_provider_contract
   github_api:
     path: ../github_api
   fpdart: ^1.1.0

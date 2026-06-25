@@ -1,11 +1,9 @@
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:cursor_api_agents/cursor_api_agents.dart';
 import 'package:cursor_mobile_commander/app/routes.dart';
 import 'package:cursor_mobile_commander/features/agents/presentation/agents_provider.dart';
-import 'package:cursor_mobile_commander/features/chat/presentation/chat_provider.dart';
 
 Future<void> showNewAgentSheet(BuildContext context, WidgetRef ref) async {
   await showModalBottomSheet<void>(
@@ -55,11 +53,11 @@ class _NewAgentSheetState extends ConsumerState<NewAgentSheet> {
   String? _resolvedRepoUrl() {
     final selected = _selectedRepoUrl?.trim();
     if (selected != null && selected.isNotEmpty) {
-      return RepositoryModel.normalizeRepoUrl(selected);
+      return RepoUrlUtils.normalize(selected);
     }
     final manual = _manualRepoController.text.trim();
     if (manual.isNotEmpty) {
-      return RepositoryModel.normalizeRepoUrl(manual);
+      return RepoUrlUtils.normalize(manual);
     }
     return null;
   }

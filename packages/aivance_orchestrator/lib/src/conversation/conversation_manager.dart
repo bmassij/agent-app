@@ -1,12 +1,12 @@
 import 'package:aivance_orchestrator/src/models/command_models.dart';
 import 'package:aivance_orchestrator/src/models/repo_context_bundle.dart';
-import 'package:cursor_api_agents/cursor_api_agents.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 
 /// Decides whether to reuse agents and tracks preferences.
 class ConversationManager {
-  ConversationManager({AgentRepository? agents}) : _agents = agents;
+  ConversationManager({ExecutionProvider? execution}) : _execution = execution;
 
-  final AgentRepository? _agents;
+  final ExecutionProvider? _execution;
   final Map<String, UserRepoPreferences> _prefs = {};
 
   UserRepoPreferences preferencesFor(String repoUrl) =>
@@ -44,17 +44,19 @@ class ConversationManager {
     required String? prUrl,
     bool forceNew = false,
   }) async {
-    if (forceNew || prUrl == null || _agents == null) {
+    if (forceNew || prUrl == null || _execution == null) {
       return null;
     }
-    final result =
-        await _agents.listAgents(prUrl: prUrl, includeArchived: false);
+    final result = await _execution.listTasks(
+      prUrl: prUrl,
+      includeArchived: false,
+    );
     return result.fold((_) => null, (page) {
-      final active = page.agents.where((a) {
-        final status = a.status.toUpperCase();
+      final active = page.tasks.where((task) {
+        final status = task.status.toUpperCase();
         return status == 'ACTIVE' || status == 'RUNNING';
       });
-      return active.isNotEmpty ? active.first.agentId : null;
+      return active.isNotEmpty ? active.first.taskId : null;
     });
   }
 }

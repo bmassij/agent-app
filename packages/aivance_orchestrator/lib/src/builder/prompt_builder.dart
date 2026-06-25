@@ -1,9 +1,9 @@
 import 'package:aivance_orchestrator/src/intent/prompt_intent.dart';
 import 'package:aivance_orchestrator/src/models/command_models.dart';
 import 'package:aivance_orchestrator/src/models/repo_context_bundle.dart';
-import 'package:cursor_api_agents/cursor_api_agents.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 
-/// Builds API requests and enriched prompts from context bundles.
+/// Builds execution requests and enriched prompts from context bundles.
 class PromptBuilder {
   const PromptBuilder({this.maxBriefingChars = 4000});
 
@@ -18,7 +18,7 @@ class PromptBuilder {
     final mode = input.mode ?? (intent.suggestPlanMode ? 'plan' : 'agent');
     final autoPr = input.autoCreatePr ?? intent.wantsPr;
 
-    final request = CreateAgentRequest.singleRepo(
+    final request = ExecuteTaskRequest.singleRepo(
       repoUrl: context.repoUrl,
       prompt: enriched,
       startingRef: usePr != null ? null : context.resolvedBranch,
@@ -44,8 +44,10 @@ class PromptBuilder {
     );
   }
 
-  CreateRunRequest buildFollowUp(
-      CommandInput input, RepoContextBundle? context) {
+  ContinueTaskRequest buildFollowUp(
+    CommandInput input,
+    RepoContextBundle? context,
+  ) {
     final briefing = context != null
         ? _buildBriefing(input, context, PromptIntent.analyze(input.userPrompt))
         : '';
@@ -53,7 +55,8 @@ class PromptBuilder {
         ? input.userPrompt
         : _wrapPrompt(input.userPrompt, briefing, input.locale);
 
-    return CreateRunRequest(
+    return ContinueTaskRequest(
+      taskId: input.existingAgentId ?? '',
       prompt: enriched,
       images: input.images,
       mode: input.mode,
@@ -115,7 +118,7 @@ class BuiltCommand {
     this.resolvedPrUrl,
   });
 
-  final CreateAgentRequest request;
+  final ExecuteTaskRequest request;
   final String userPrompt;
   final String enrichedPrompt;
   final String contextSummary;

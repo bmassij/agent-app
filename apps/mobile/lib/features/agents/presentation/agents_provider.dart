@@ -1,11 +1,14 @@
 import 'package:aivance_orchestrator/aivance_orchestrator.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart' as api;
 import 'package:cursor_api_core/cursor_api_core.dart';
 import 'package:cursor_api_stream/cursor_api_stream.dart';
+import 'package:cursor_execution_provider/cursor_execution_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:github_api/github_api.dart';
 
 import 'package:cursor_mobile_commander/core/database/database_provider.dart';
+import 'package:cursor_mobile_commander/core/storage/secure_storage_keys.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_service.dart';
 import 'package:cursor_mobile_commander/features/agents/data/agent_local_source.dart';
 import 'package:cursor_mobile_commander/features/agents/data/agent_repository_impl.dart';
@@ -20,13 +23,28 @@ final cursorApiKeyProvider = FutureProvider<String?>((ref) async {
   return storage.readCursorToken();
 });
 
-final apiAgentRepositoryProvider =
-    FutureProvider<api.AgentRepository>((ref) async {
+final providerRegistryProvider = Provider<ProviderRegistry>((ref) {
+  return ProviderRegistry();
+});
+
+final executionProviderProvider =
+    FutureProvider<ExecutionProvider>((ref) async {
   final key = await ref.watch(cursorApiKeyProvider.future);
   if (key == null || key.isEmpty) {
-    throw StateError('Cursor API key not configured');
+    throw StateError('Workspace connection not configured');
   }
-  return api.AgentRepositoryImpl(CursorHttpClient(apiKey: key));
+
+  final registry = ref.watch(providerRegistryProvider);
+  if (registry.isRegistered('cursor')) {
+    return registry.get('cursor');
+  }
+
+  final cursorProvider = CursorExecutionProvider(
+    agents: api.AgentRepositoryImpl(CursorHttpClient(apiKey: key)),
+    streamService: RunStreamService(apiKey: key),
+  );
+  registry.register(cursorProvider, isDefault: true);
+  return cursorProvider;
 });
 
 final agentLocalSourceProvider = FutureProvider<AgentLocalSource>((ref) async {
@@ -49,43 +67,33 @@ final githubRepositoryProvider = FutureProvider<GithubRepository?>((ref) async {
 
 final commandOrchestratorProvider =
     FutureProvider<AgentCommandOrchestrator>((ref) async {
-  final apiRepo = await ref.watch(apiAgentRepositoryProvider.future);
+  final execution = await ref.watch(executionProviderProvider.future);
   final github = await ref.watch(githubRepositoryProvider.future);
   return AgentCommandOrchestrator(
-    agents: apiRepo,
+    execution: execution,
     github: github,
   );
 });
 
 final agentRepositoryProvider = FutureProvider<AgentRepository>((ref) async {
-  final apiRepo = await ref.watch(apiAgentRepositoryProvider.future);
+  final execution = await ref.watch(executionProviderProvider.future);
   final local = await ref.watch(agentLocalSourceProvider.future);
   final orchestrator = await ref.watch(commandOrchestratorProvider.future);
   return AgentRepositoryImpl(
-    apiRepository: apiRepo,
+    executionProvider: execution,
     localSource: local,
     orchestrator: orchestrator,
   );
 });
 
-final runStreamServiceProvider = FutureProvider<RunStreamService>((ref) async {
-  final key = await ref.watch(cursorApiKeyProvider.future);
-  if (key == null || key.isEmpty) {
-    throw StateError('Cursor API key not configured');
-  }
-  return RunStreamService(apiKey: key);
-});
-
 final chatRepositoryProvider = FutureProvider<ChatRepository>((ref) async {
   final db = await ref.watch(appDatabaseFutureProvider.future);
-  final stream = await ref.watch(runStreamServiceProvider.future);
-  final apiRepo = await ref.watch(apiAgentRepositoryProvider.future);
+  final execution = await ref.watch(executionProviderProvider.future);
   final local = ChatLocalSource(db);
   final agentLocal = await ref.watch(agentLocalSourceProvider.future);
   return ChatRepositoryImpl(
     database: db,
-    streamService: stream,
-    apiRepository: apiRepo,
+    executionProvider: execution,
     localSource: local,
     agentLocal: agentLocal,
   );
@@ -142,3 +150,39 @@ final activeAgentsCountProvider = Provider<int>((ref) {
   final agents = ref.watch(agentListProvider).valueOrNull ?? const [];
   return agents.where((a) => a.isActive).length;
 });
+
+final repositoriesProvider = FutureProvider<List<String>>((ref) async {
+  final execution = await ref.watch(executionProviderProvider.future);
+  final result = await execution.listRepositories();
+  return result.fold(
+    (f) => throw StateError(f.message),
+    (page) => page.repositories
+        .map((repo) => RepoUrlUtils.normalize(repo.url))
+        .where((url) => url.isNotEmpty)
+        .toList(),
+  );
+});
+
+final modelsProvider = FutureProvider<api.ModelListPage>((ref) async {
+  final repo = await ref.watch(agentRepositoryProvider.future);
+  final result = await repo.listModels();
+  return result.fold(
+    (_) => const api.ModelListPage(models: []),
+    (page) => page,
+  );
+});
+
+final defaultRepoUrlProvider = FutureProvider<String?>((ref) async {
+  final storage = ref.watch(secureStorageServiceProvider);
+  final lastUsed = await storage.readKey(SecureStorageKeys.lastUsedRepoUrl);
+  if (lastUsed != null && lastUsed.isNotEmpty) {
+    return lastUsed;
+  }
+  final repos = await ref.watch(repositoriesProvider.future);
+  return repos.isEmpty ? null : repos.first;
+});
+
+Future<void> saveLastUsedRepoUrl(WidgetRef ref, String repoUrl) async {
+  final storage = ref.read(secureStorageServiceProvider);
+  await storage.writeKey(SecureStorageKeys.lastUsedRepoUrl, repoUrl);
+}

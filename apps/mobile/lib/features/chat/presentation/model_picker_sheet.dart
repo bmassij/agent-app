@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:cursor_mobile_commander/features/chat/presentation/chat_provider.dart';
+import 'package:cursor_mobile_commander/features/agents/presentation/agents_provider.dart';
 
 /// Model picker bottom sheet (GET /v1/models).
 class ModelPickerSheet extends ConsumerWidget {

@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:cursor_api_stream/cursor_api_stream.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:drift/drift.dart';
 
 import 'package:cursor_mobile_commander/core/database/app_database.dart';
 import 'package:cursor_mobile_commander/features/agents/data/agent_local_source.dart';
 
-/// Persists SSE events to Drift tables.
+/// Persists task stream events to Drift tables.
 class ChatSsePersister {
   ChatSsePersister({
     required AppDatabase database,
@@ -21,13 +21,13 @@ class ChatSsePersister {
   Future<void> persist({
     required String agentId,
     required String runId,
-    required SseEvent event,
+    required TaskStreamEvent event,
   }) async {
     _sequence++;
     final now = DateTime.now().toUtc();
 
     switch (event) {
-      case AssistantDeltaEvent(:final delta):
+      case AssistantDeltaStreamEvent(:final delta):
         await _appendDelta(
           runId: runId,
           role: 'assistant',
@@ -36,7 +36,7 @@ class ChatSsePersister {
           sequence: _sequence,
           timestamp: now,
         );
-      case ThinkingDeltaEvent(:final delta):
+      case ThinkingDeltaStreamEvent(:final delta):
         await _appendDelta(
           runId: runId,
           role: 'thinking',
@@ -45,7 +45,7 @@ class ChatSsePersister {
           sequence: _sequence,
           timestamp: now,
         );
-      case ToolCallEvent(
+      case ToolCallStreamEvent(
           :final callId,
           :final name,
           :final status,
@@ -66,7 +66,7 @@ class ChatSsePersister {
                 ),
               ),
             );
-      case ResultEvent(:final text):
+      case ResultStreamEvent(:final text):
         await _upsertMessage(
           id: '${runId}_result',
           runId: runId,
@@ -76,7 +76,7 @@ class ChatSsePersister {
           sequence: _sequence,
           timestamp: now,
         );
-      case StatusEvent(:final status):
+      case StatusStreamEvent(:final status):
         await _upsertMessage(
           id: '${runId}_status_$_sequence',
           runId: runId,
@@ -86,7 +86,7 @@ class ChatSsePersister {
           sequence: _sequence,
           timestamp: now,
         );
-      case InteractionUpdateEvent(:final payload):
+      case InteractionUpdateStreamEvent(:final payload):
         final label = payload['message'] as String? ??
             payload['type'] as String? ??
             payload['kind'] as String? ??
@@ -100,7 +100,7 @@ class ChatSsePersister {
           sequence: _sequence,
           timestamp: now,
         );
-      case DoneEvent():
+      case DoneStreamEvent():
         await _agentLocal.upsertRun(
           runId: runId,
           agentId: agentId,
@@ -118,7 +118,7 @@ class ChatSsePersister {
             updatedAt: now,
           );
         }
-      case ErrorEvent(:final code, :final message):
+      case ErrorStreamEvent(:final code, :final message):
         await _agentLocal.upsertRun(
           runId: runId,
           agentId: agentId,
@@ -127,8 +127,8 @@ class ChatSsePersister {
           errorMessage: message,
           completedAt: now,
         );
-      case HeartbeatEvent():
-      case UnknownSseEvent():
+      case HeartbeatStreamEvent():
+      case UnknownStreamEvent():
         break;
     }
   }

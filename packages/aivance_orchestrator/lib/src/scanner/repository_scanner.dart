@@ -1,5 +1,5 @@
 import 'package:aivance_orchestrator/src/models/repo_context_bundle.dart';
-import 'package:cursor_api_agents/cursor_api_agents.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:github_api/github_api.dart';
 
 /// Parses owner/repo and fetches GitHub metadata when a token is available.
@@ -9,7 +9,7 @@ class RepositoryScanner {
   final GithubRepository? _github;
 
   static ({String owner, String repo})? parseRepoUrl(String url) {
-    final normalized = RepositoryModel.normalizeRepoUrl(url);
+    final normalized = RepoUrlUtils.normalize(url);
     final uri = Uri.tryParse(normalized);
     if (uri == null) {
       return null;
@@ -31,7 +31,7 @@ class RepositoryScanner {
     final parsed = parseRepoUrl(repoUrl);
     if (parsed == null) {
       return RepoContextBundle(
-        repoUrl: RepositoryModel.normalizeRepoUrl(repoUrl),
+        repoUrl: RepoUrlUtils.normalize(repoUrl),
         owner: 'unknown',
         repoName: 'repo',
         resolvedBranch: branch ?? preferredBranch ?? 'main',
@@ -163,7 +163,7 @@ class RepositoryScanner {
     }
 
     return RepoContextBundle(
-      repoUrl: RepositoryModel.normalizeRepoUrl(repoUrl),
+      repoUrl: RepoUrlUtils.normalize(repoUrl),
       owner: parsed.owner,
       repoName: parsed.repo,
       resolvedBranch: resolvedBranch,

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cursor_api_stream/cursor_api_stream.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:cursor_commander_desktop/services/cursor_session.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final _composer = TextEditingController();
   final _scroll = ScrollController();
 
-  StreamSubscription<SseEvent>? _sub;
+  StreamSubscription<TaskStreamEvent>? _sub;
   bool _runActive = false;
   bool _sending = false;
   String? _error;
@@ -69,27 +69,27 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void _onEvent(SseEvent event) {
-    if (event is AssistantDeltaEvent) {
+  void _onEvent(TaskStreamEvent event) {
+    if (event is AssistantDeltaStreamEvent) {
       setState(() {
         _assistantBuffer += event.delta;
         _syncAssistantBubble();
       });
       _scrollToEnd();
-    } else if (event is ResultEvent && event.text.isNotEmpty) {
+    } else if (event is ResultStreamEvent && event.text.isNotEmpty) {
       setState(() {
         _assistantBuffer = event.text;
         _syncAssistantBubble();
         _runActive = false;
       });
-    } else if (event is DoneEvent) {
+    } else if (event is DoneStreamEvent) {
       setState(() => _runActive = false);
-    } else if (event is ErrorEvent) {
+    } else if (event is ErrorStreamEvent) {
       setState(() {
         _error = event.message;
         _runActive = false;
       });
-    } else if (event is StatusEvent) {
+    } else if (event is StatusStreamEvent) {
       setState(() {
         _messages.add(_ChatLine.system('Status: ${event.status}'));
       });

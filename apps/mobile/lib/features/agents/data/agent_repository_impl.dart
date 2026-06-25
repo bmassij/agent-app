@@ -1,25 +1,38 @@
 import 'package:aivance_orchestrator/aivance_orchestrator.dart';
+
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
+
 import 'package:cursor_api_agents/cursor_api_agents.dart' as api;
+
 import 'package:fpdart/fpdart.dart';
 
 import 'package:cursor_mobile_commander/features/agents/data/agent_local_source.dart';
+
+import 'package:cursor_mobile_commander/features/agents/data/execution_failure_mapper.dart';
+
 import 'package:cursor_mobile_commander/features/agents/domain/agent_failure.dart';
+
 import 'package:cursor_mobile_commander/features/agents/domain/agent_model.dart';
+
 import 'package:cursor_mobile_commander/features/agents/domain/agent_repository.dart';
+
 import 'package:cursor_mobile_commander/features/agents/domain/run_model.dart';
 
 class AgentRepositoryImpl implements AgentRepository {
   AgentRepositoryImpl({
-    required api.AgentRepository apiRepository,
+    required ExecutionProvider executionProvider,
     required AgentLocalSource localSource,
     AgentCommandOrchestrator? orchestrator,
-  })  : _api = apiRepository,
+  })  : _execution = executionProvider,
         _local = localSource,
         _orchestrator = orchestrator;
 
-  final api.AgentRepository _api;
+  final ExecutionProvider _execution;
+
   final AgentLocalSource _local;
+
   final AgentCommandOrchestrator? _orchestrator;
+
   @override
   Stream<List<AgentSession>> watchAgents() => _local.watchAgents();
 
@@ -28,23 +41,26 @@ class AgentRepositoryImpl implements AgentRepository {
 
   @override
   Future<Either<AgentFailure, Unit>> syncAgentsFromApi() async {
-    final result = await _api.listAgents();
+    final result = await _execution.listTasks();
+
     return result.fold(
-      left,
+      (f) => left(ExecutionFailureMapper.toAgentFailure(f)),
       (page) async {
-        for (final agent in page.agents) {
-          final existing = await _local.getAgent(agent.agentId);
+        for (final task in page.tasks) {
+          final existing = await _local.getAgent(task.taskId);
+
           await _local.upsertAgent(
-            agentId: agent.agentId,
+            agentId: task.taskId,
             projectId: existing?.projectId ?? 'default',
-            name: agent.name ?? existing?.name ?? 'Worker ${agent.agentId}',
-            status: agent.status,
-            latestRunId: agent.latestRunId,
-            createdAt: agent.createdAt ?? existing?.createdAt,
-            updatedAt: agent.updatedAt ?? DateTime.now().toUtc(),
+            name: task.name ?? existing?.name ?? 'Worker ${task.taskId}',
+            status: task.status,
+            latestRunId: task.latestRunId,
+            createdAt: task.createdAt ?? existing?.createdAt,
+            updatedAt: task.updatedAt ?? DateTime.now().toUtc(),
             tags: existing?.tags,
           );
         }
+
         return right(unit);
       },
     );
@@ -53,22 +69,26 @@ class AgentRepositoryImpl implements AgentRepository {
   @override
   Future<Either<AgentFailure, AgentSession>> getAgent(String agentId) async {
     final local = await _local.getAgent(agentId);
+
     if (local != null) {
       return right(local);
     }
-    final remote = await _api.getAgent(agentId);
+
+    final remote = await _execution.getTask(agentId);
+
     return remote.fold(
-      left,
-      (agent) async {
+      (f) => left(ExecutionFailureMapper.toAgentFailure(f)),
+      (task) async {
         final session = AgentSession(
-          agentId: agent.agentId,
+          agentId: task.taskId,
           projectId: 'default',
-          name: agent.name ?? 'Worker ${agent.agentId}',
-          status: agent.status,
-          latestRunId: agent.latestRunId,
-          createdAt: agent.createdAt ?? DateTime.now().toUtc(),
-          updatedAt: agent.updatedAt ?? DateTime.now().toUtc(),
+          name: task.name ?? 'Worker ${task.taskId}',
+          status: task.status,
+          latestRunId: task.latestRunId,
+          createdAt: task.createdAt ?? DateTime.now().toUtc(),
+          updatedAt: task.updatedAt ?? DateTime.now().toUtc(),
         );
+
         await _local.upsertAgent(
           agentId: session.agentId,
           projectId: session.projectId,
@@ -78,6 +98,7 @@ class AgentRepositoryImpl implements AgentRepository {
           createdAt: session.createdAt,
           updatedAt: session.updatedAt,
         );
+
         return right(session);
       },
     );
@@ -104,13 +125,14 @@ class AgentRepositoryImpl implements AgentRepository {
           repoUrl: repoUrl,
           branch: startingRef,
           prUrl: prUrl,
-          images: images,
+          images: ExecutionFailureMapper.toTaskImages(images),
           modelId: model,
           mode: mode,
           autoCreatePr: autoCreatePr,
           workOnCurrentBranch: workOnCurrentBranch,
         ),
       );
+
       return dispatched.fold(
         left,
         (result) => right(
@@ -123,13 +145,13 @@ class AgentRepositoryImpl implements AgentRepository {
       );
     }
 
-    final result = await _api.createAgent(
-      api.CreateAgentRequest.singleRepo(
+    final result = await _execution.executeTask(
+      ExecuteTaskRequest.singleRepo(
         repoUrl: repoUrl,
         prompt: prompt,
         startingRef: startingRef,
         prUrl: prUrl,
-        images: images,
+        images: ExecutionFailureMapper.toTaskImages(images),
         modelId: model,
         mode: mode,
         autoCreatePr: autoCreatePr,
@@ -137,7 +159,20 @@ class AgentRepositoryImpl implements AgentRepository {
       ),
     );
 
-    return _persistCreate(projectId, prompt, result);
+    return _persistCreate(
+      projectId,
+      prompt,
+      result.fold(
+        (f) => left(ExecutionFailureMapper.toAgentFailure(f)),
+        (created) => right(
+          api.CreateAgentResult(
+            agentId: created.taskId,
+            runId: created.runId,
+            status: created.status,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -146,11 +181,13 @@ class AgentRepositoryImpl implements AgentRepository {
     required CommandInput input,
   }) async {
     final orchestrator = _orchestrator;
+
     if (orchestrator == null) {
       return left(const api.AgentUnknownFailure('Orchestrator not configured'));
     }
 
     final dispatched = await orchestrator.dispatch(input);
+
     return dispatched.fold(
       (msg) => left(api.AgentUnknownFailure(msg)),
       (result) async {
@@ -159,7 +196,9 @@ class AgentRepositoryImpl implements AgentRepository {
           runId: result.runId,
           status: result.status,
         );
+
         await _persistCreate(projectId, input.userPrompt, right(apiResult));
+
         return right(result);
       },
     );
@@ -174,8 +213,10 @@ class AgentRepositoryImpl implements AgentRepository {
       left,
       (created) async {
         final now = DateTime.now().toUtc();
+
         final name =
             prompt.length > 48 ? '${prompt.substring(0, 48)}…' : prompt;
+
         await _local.upsertAgent(
           agentId: created.agentId,
           projectId: projectId,
@@ -185,12 +226,14 @@ class AgentRepositoryImpl implements AgentRepository {
           createdAt: now,
           updatedAt: now,
         );
+
         await _local.upsertRun(
           runId: created.runId,
           agentId: created.agentId,
           status: created.status ?? 'running',
           createdAt: now,
         );
+
         return right(created);
       },
     );
@@ -205,6 +248,7 @@ class AgentRepositoryImpl implements AgentRepository {
     String? repoUrl,
   }) async {
     final localAgent = await _local.getAgent(agentId);
+
     final resolvedRepo =
         repoUrl ?? _repoUrlFromProjectId(localAgent?.projectId);
 
@@ -213,10 +257,12 @@ class AgentRepositoryImpl implements AgentRepository {
         userPrompt: prompt,
         repoUrl: resolvedRepo,
         mode: mode,
-        images: images,
+        images: ExecutionFailureMapper.toTaskImages(images),
         existingAgentId: agentId,
       );
+
       final dispatched = await _orchestrator.dispatch(input);
+
       return dispatched.fold(
         (msg) => left(api.AgentUnknownFailure(msg)),
         (result) async {
@@ -224,16 +270,28 @@ class AgentRepositoryImpl implements AgentRepository {
             runId: result.runId,
             status: result.status ?? 'CREATING',
           );
+
           return _persistRun(agentId, run);
         },
       );
     }
 
-    final result = await _api.createRun(
-      agentId,
-      api.CreateRunRequest(prompt: prompt, mode: mode, images: images),
+    final result = await _execution.continueTask(
+      ContinueTaskRequest(
+        taskId: agentId,
+        prompt: prompt,
+        mode: mode,
+        images: ExecutionFailureMapper.toTaskImages(images),
+      ),
     );
-    return result.fold(left, (run) => _persistRun(agentId, run));
+
+    return result.fold(
+      (f) => left(ExecutionFailureMapper.toAgentFailure(f)),
+      (run) => _persistRun(
+        agentId,
+        api.CreateRunResult(runId: run.runId, status: run.status ?? 'CREATING'),
+      ),
+    );
   }
 
   Future<Either<AgentFailure, api.CreateRunResult>> _persistRun(
@@ -241,12 +299,14 @@ class AgentRepositoryImpl implements AgentRepository {
     api.CreateRunResult run,
   ) async {
     final now = DateTime.now().toUtc();
+
     await _local.upsertRun(
       runId: run.runId,
       agentId: agentId,
       status: run.status,
       createdAt: now,
     );
+
     await _local.upsertAgent(
       agentId: agentId,
       projectId: (await _local.getAgent(agentId))?.projectId ?? 'default',
@@ -263,9 +323,10 @@ class AgentRepositoryImpl implements AgentRepository {
     required String agentId,
     required String runId,
   }) async {
-    final result = await _api.cancelRun(agentId, runId);
+    final result = await _execution.cancelTask(agentId, runId);
+
     return result.fold(
-      left,
+      (f) => left(ExecutionFailureMapper.toAgentFailure(f)),
       (_) async {
         await _local.upsertRun(
           runId: runId,
@@ -273,7 +334,9 @@ class AgentRepositoryImpl implements AgentRepository {
           status: 'cancelled',
           completedAt: DateTime.now().toUtc(),
         );
+
         final agent = await _local.getAgent(agentId);
+
         if (agent != null) {
           await _local.upsertAgent(
             agentId: agentId,
@@ -284,6 +347,7 @@ class AgentRepositoryImpl implements AgentRepository {
             updatedAt: DateTime.now().toUtc(),
           );
         }
+
         return right(unit);
       },
     );
@@ -299,9 +363,10 @@ class AgentRepositoryImpl implements AgentRepository {
     required String agentId,
     required String runId,
   }) async {
-    final result = await _api.getRun(agentId, runId);
+    final result = await _execution.getRun(agentId, runId);
+
     return result.fold(
-      left,
+      (f) => left(ExecutionFailureMapper.toAgentFailure(f)),
       (run) async {
         await _local.upsertRun(
           runId: run.runId,
@@ -311,6 +376,7 @@ class AgentRepositoryImpl implements AgentRepository {
           createdAt: run.createdAt,
           completedAt: run.completedAt,
         );
+
         return right(
           api.RunModel(
             runId: run.runId,
@@ -326,22 +392,54 @@ class AgentRepositoryImpl implements AgentRepository {
   }
 
   @override
-  Future<Either<AgentFailure, api.ModelListPage>> listModels() {
-    return _api.listModels();
+  Future<Either<AgentFailure, api.ModelListPage>> listModels() async {
+    final result = await _execution.listModels();
+
+    return result.fold(
+      (f) => left(ExecutionFailureMapper.toAgentFailure(f)),
+      (page) => right(
+        api.ModelListPage(
+          models: page.models
+              .map((m) => api.ModelInfoModel(id: m.id, name: m.name))
+              .toList(),
+        ),
+      ),
+    );
   }
 
   @override
-  Future<Either<AgentFailure, api.RepositoryListPage>> listRepositories() {
-    return _api.listRepositories();
+  Future<Either<AgentFailure, api.RepositoryListPage>>
+      listRepositories() async {
+    final result = await _execution.listRepositories();
+
+    return result.fold(
+      (f) => left(ExecutionFailureMapper.toAgentFailure(f)),
+      (page) => right(
+        api.RepositoryListPage(
+          repositories: page.repositories
+              .map(
+                (repo) => api.RepositoryModel(
+                  url: repo.url,
+                  owner: repo.owner,
+                  name: repo.name,
+                  defaultBranch: repo.defaultBranch,
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
   }
 
   String _repoUrlFromProjectId(String? projectId) {
     if (projectId == null || projectId.isEmpty || projectId == 'default') {
       return 'https://github.com/unknown/repo';
     }
+
     if (projectId.startsWith('http')) {
       return projectId;
     }
+
     return 'https://github.com/$projectId';
   }
 }

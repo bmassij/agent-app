@@ -20,7 +20,7 @@ Living document tracking **implemented** vs **planned** features in Aivance Core
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Flutter/Dart monorepo (Melos) | ✅ | Melos workspace `aivance`; 5 packages + mobile + desktop |
+| Flutter/Dart monorepo (Melos) | ✅ | 10 packages (incl. provider contract + capabilities) |
 | Workspace connection (secure storage) | ✅ | QR + manual paste; `GET /v1/me` validation |
 | GitHub OAuth PKCE | ✅ | Deep link `cursormc://oauth` |
 | Biometric unlock | ✅ | Opt-in at onboarding |
@@ -30,7 +30,10 @@ Living document tracking **implemented** vs **planned** features in Aivance Core
 | Follow-up prompts | ✅ | Orchestrator enrichment (M2 O1) |
 | Cancel run | ✅ | |
 | Pin projects | ✅ | |
-| Orchestrator on create | ✅ | `aivance_orchestrator` |
+| Orchestrator on create | ✅ | `aivance_orchestrator` via `ExecutionProvider` |
+| Provider abstraction (M3) | ✅ | `ExecutionProvider` + `CursorExecutionProvider` |
+| Execution capabilities model | ✅ | `aivance_capabilities` |
+| Provider registry | ✅ | `ProviderRegistry` — Cursor only |
 | Offline prompt queue | ✅ | `queued_prompts` + `QueuedPromptService` |
 | Connectivity detection | ✅ | `connectivity_plus` via `ConnectivityService` |
 | CI/CD | ✅ | `.github/workflows/ci.yml` (M2) |
@@ -66,17 +69,16 @@ Living document tracking **implemented** vs **planned** features in Aivance Core
 
 ---
 
-## Planned (M3+)
+## Planned (M4+)
 
 | Item | Phase |
 |------|-------|
-| ExecutionProvider abstraction | M3 |
-| `aivance_capabilities` package | M3 |
 | App package rename `cursor_mobile_commander` | M4+ |
-| Project Registry | M4 |
+| Project Registry (`aivance_project`) | M4 |
 | Project DNA wizard | M5 |
+| Multi-provider routing | M5+ |
 | Presence™ module | M6 |
 
 ---
 
-*Updated during M2 migration (2026-06-25).*
+*Updated during M3 migration (2026-06-25).*

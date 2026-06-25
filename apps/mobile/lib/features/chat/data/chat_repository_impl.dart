@@ -1,10 +1,12 @@
-import 'package:cursor_api_agents/cursor_api_agents.dart' as api;
-import 'package:cursor_api_stream/cursor_api_stream.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
+import 'package:cursor_execution_provider/cursor_execution_provider.dart';
 import 'package:drift/drift.dart';
 import 'package:fpdart/fpdart.dart';
 
 import 'package:cursor_mobile_commander/core/database/app_database.dart';
 import 'package:cursor_mobile_commander/features/agents/data/agent_local_source.dart';
+import 'package:cursor_mobile_commander/features/agents/data/execution_failure_mapper.dart';
+import 'package:cursor_mobile_commander/features/agents/domain/agent_failure.dart';
 import 'package:cursor_mobile_commander/features/chat/data/chat_local_source.dart';
 import 'package:cursor_mobile_commander/features/chat/data/chat_sse_persister.dart';
 import 'package:cursor_mobile_commander/features/chat/domain/chat_message_model.dart';
@@ -14,20 +16,17 @@ import 'package:cursor_mobile_commander/features/chat/domain/tool_call_model.dar
 class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl({
     required AppDatabase database,
-    required RunStreamService streamService,
-    required api.AgentRepository apiRepository,
+    required ExecutionProvider executionProvider,
     required ChatLocalSource localSource,
     required AgentLocalSource agentLocal,
   })  : _db = database,
-        _stream = streamService,
-        _api = apiRepository,
+        _execution = executionProvider,
         _local = localSource,
         _persister =
             ChatSsePersister(database: database, agentLocal: agentLocal);
 
   final AppDatabase _db;
-  final RunStreamService _stream;
-  final api.AgentRepository _api;
+  final ExecutionProvider _execution;
   final ChatLocalSource _local;
   final ChatSsePersister _persister;
   bool _liveSseLogged = false;
@@ -36,7 +35,13 @@ class ChatRepositoryImpl implements ChatRepository {
   bool get hasLoggedLiveSse => _liveSseLogged;
 
   @override
-  List<String> get rawSseLogLines => _stream.logger.loggedLines;
+  List<String> get rawSseLogLines {
+    final provider = _execution;
+    if (provider is CursorExecutionProvider) {
+      return provider.rawSseLogLines;
+    }
+    return const [];
+  }
 
   @override
   Stream<List<ChatMessageModel>> watchMessagesForAgent(String agentId) {
@@ -57,20 +62,21 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Stream<SseEvent> streamRun({
+  Stream<TaskStreamEvent> streamRun({
     required String agentId,
     required String runId,
     String? lastEventId,
   }) {
-    return _stream
-        .connectRun(
-      agentId: agentId,
-      runId: runId,
-      lastEventId: lastEventId,
-      onStreamExpired: () {},
+    return _execution
+        .streamTask(
+      TaskStreamRequest(
+        taskId: agentId,
+        runId: runId,
+        lastEventId: lastEventId,
+      ),
     )
         .map((event) {
-      if (!_liveSseLogged && _stream.logger.loggedLines.isNotEmpty) {
+      if (!_liveSseLogged && rawSseLogLines.isNotEmpty) {
         _liveSseLogged = true;
       }
       return event;
@@ -78,22 +84,22 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<void> persistSseEvent({
+  Future<void> persistStreamEvent({
     required String agentId,
     required String runId,
-    required SseEvent event,
+    required TaskStreamEvent event,
   }) {
     return _persister.persist(agentId: agentId, runId: runId, event: event);
   }
 
   @override
-  Future<Either<api.AgentFailure, Unit>> fetchUsageForRun({
+  Future<Either<AgentFailure, Unit>> fetchUsageForRun({
     required String agentId,
     required String runId,
   }) async {
-    final result = await _api.getUsage(agentId);
+    final result = await _execution.getUsage(agentId);
     return result.fold(
-      left,
+      (f) => left(ExecutionFailureMapper.toAgentFailure(f)),
       (usage) async {
         final row = usage.runs.where((r) => r.runId == runId).firstOrNull;
         if (row != null) {

@@ -1,29 +1,42 @@
 import 'package:aivance_orchestrator/aivance_orchestrator.dart';
-import 'package:cursor_api_agents/cursor_api_agents.dart';
+import 'package:aivance_provider_contract/aivance_provider_contract.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-class _MockAgentRepository extends Mock implements AgentRepository {}
+class _MockExecutionProvider extends Mock implements ExecutionProvider {}
 
 void main() {
   setUpAll(() {
-    registerFallbackValue(const CreateRunRequest(prompt: 'fallback'));
+    registerFallbackValue(
+      ExecuteTaskRequest.singleRepo(
+        repoUrl: 'https://github.com/o/r',
+        prompt: 'fallback',
+      ),
+    );
+    registerFallbackValue(
+      const ContinueTaskRequest(taskId: 'agent-42', prompt: 'fallback'),
+    );
   });
 
   group('AgentCommandOrchestrator follow-up', () {
-    late _MockAgentRepository agents;
+    late _MockExecutionProvider execution;
     late AgentCommandOrchestrator orchestrator;
 
     setUp(() {
-      agents = _MockAgentRepository();
-      orchestrator = AgentCommandOrchestrator(agents: agents);
+      execution = _MockExecutionProvider();
+      when(() => execution.id).thenReturn('cursor');
+      orchestrator = AgentCommandOrchestrator(execution: execution);
     });
 
-    test('enriches follow-up prompt via createRun', () async {
-      when(() => agents.createRun(any(), any())).thenAnswer(
+    test('enriches follow-up prompt via continueTask', () async {
+      when(() => execution.continueTask(any())).thenAnswer(
         (_) async => right(
-          const CreateRunResult(runId: 'run-1', status: 'RUNNING'),
+          const ContinueTaskResult(
+            taskId: 'agent-42',
+            runId: 'run-1',
+            status: 'RUNNING',
+          ),
         ),
       );
 
@@ -37,8 +50,8 @@ void main() {
 
       expect(result.isRight(), isTrue);
       final captured = verify(
-        () => agents.createRun('agent-42', captureAny()),
-      ).captured.single as CreateRunRequest;
+        () => execution.continueTask(captureAny()),
+      ).captured.single as ContinueTaskRequest;
 
       expect(captured.prompt, contains('Fix deze bug'));
       expect(captured.prompt, contains('Repository: o/r'));
