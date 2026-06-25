@@ -77,7 +77,7 @@ class _CommanderAppState extends ConsumerState<CommanderApp> {
     }
 
     return MaterialApp.router(
-      title: 'Cursor Mobile Commander',
+      title: 'Aivance',
       theme: AppTheme.dark,
       debugShowCheckedModeBanner: false,
       routerConfig: router,

@@ -57,11 +57,17 @@ String? authRedirect({
   }
 
   if (isAuthenticated && onboardingDone && onOnboarding) {
-    return Routes.homeProjects;
+    return Routes.homeWorkers;
   }
 
   if (location == Routes.home) {
-    return Routes.homeProjects;
+    return Routes.homeWorkers;
+  }
+
+  // Legacy `/home/agents` paths redirect to Aivance worker routes (M1).
+  if (location == Routes.homeAgents ||
+      location.startsWith('${Routes.homeAgents}/')) {
+    return location.replaceFirst(Routes.homeAgents, Routes.homeWorkers);
   }
 
   return null;
@@ -94,7 +100,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: 'key-setup',
-                builder: (context, state) => const KeySetupScreen(),
+                builder: (context, state) {
+                  final scan = state.uri.queryParameters['scan'] == 'true';
+                  return KeySetupScreen(startWithScanner: scan);
+                },
               ),
             ],
           ),
@@ -139,7 +148,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: Routes.homeAgents,
+                path: Routes.homeWorkers,
                 builder: (context, state) => const AgentListScreen(),
                 routes: [
                   GoRoute(
@@ -182,7 +191,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'keys',
                     builder: (context, state) =>
-                        const PlaceholderScreen(title: 'API Keys'),
+                        const PlaceholderScreen(title: 'Connections'),
                   ),
                   GoRoute(
                     path: 'templates',

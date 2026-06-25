@@ -57,8 +57,8 @@ class _PinRepoScreenState extends ConsumerState<PinRepoScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Pin a GitHub repository for your agents. '
-              'Full repo browser arrives in Sprint 5.',
+              'Pin a GitHub repository for your projects. '
+              'Full repo browser arrives in a future release.',
             ),
             const SizedBox(height: AppSizes.paddingMedium),
             TextField(

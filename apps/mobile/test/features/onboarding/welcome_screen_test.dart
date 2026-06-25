@@ -10,7 +10,7 @@ void main() {
       const MaterialApp(home: WelcomeScreen()),
     );
 
-    expect(find.text('Cursor Mobile Commander'), findsOneWidget);
-    expect(find.text('Get started'), findsOneWidget);
+    expect(find.text('Delegate work from your phone'), findsOneWidget);
+    expect(find.text('Connect workspace'), findsOneWidget);
   });
 }

@@ -29,7 +29,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Cursor API Key'), findsOneWidget);
+    expect(find.text('Workspace connection'), findsOneWidget);
     expect(find.text('Validate & continue'), findsOneWidget);
     expect(find.text('Scan QR code'), findsOneWidget);
   });

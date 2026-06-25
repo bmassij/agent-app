@@ -36,7 +36,7 @@ class AgentRepositoryImpl implements AgentRepository {
           await _local.upsertAgent(
             agentId: agent.agentId,
             projectId: existing?.projectId ?? 'default',
-            name: agent.name ?? existing?.name ?? 'Agent ${agent.agentId}',
+            name: agent.name ?? existing?.name ?? 'Worker ${agent.agentId}',
             status: agent.status,
             latestRunId: agent.latestRunId,
             createdAt: agent.createdAt ?? existing?.createdAt,
@@ -62,7 +62,7 @@ class AgentRepositoryImpl implements AgentRepository {
         final session = AgentSession(
           agentId: agent.agentId,
           projectId: 'default',
-          name: agent.name ?? 'Agent ${agent.agentId}',
+          name: agent.name ?? 'Worker ${agent.agentId}',
           status: agent.status,
           latestRunId: agent.latestRunId,
           createdAt: agent.createdAt ?? DateTime.now().toUtc(),
@@ -244,7 +244,7 @@ class AgentRepositoryImpl implements AgentRepository {
     await _local.upsertAgent(
       agentId: agentId,
       projectId: (await _local.getAgent(agentId))?.projectId ?? 'default',
-      name: (await _local.getAgent(agentId))?.name ?? 'Agent',
+      name: (await _local.getAgent(agentId))?.name ?? 'Worker',
       status: run.status,
       latestRunId: run.runId,
       updatedAt: now,

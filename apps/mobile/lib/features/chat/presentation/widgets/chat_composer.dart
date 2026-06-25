@@ -53,7 +53,7 @@ class _ChatComposerState extends State<ChatComposer> {
                 minLines: 1,
                 maxLines: 5,
                 decoration: InputDecoration(
-                  hintText: 'Message your agent…',
+                  hintText: 'Message your worker…',
                   filled: true,
                   fillColor: AppColors.card,
                   border: OutlineInputBorder(

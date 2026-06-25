@@ -68,7 +68,7 @@ class _NewAgentSheetState extends ConsumerState<NewAgentSheet> {
     final prompt = _promptController.text.trim();
     final repo = _resolvedRepoUrl();
     if (prompt.isEmpty) {
-      setState(() => _error = 'Describe what the agent should do.');
+      setState(() => _error = 'Describe what you want done.');
       return;
     }
     if (repo == null || repo.isEmpty) {
@@ -185,7 +185,8 @@ class _NewAgentSheetState extends ConsumerState<NewAgentSheet> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'No repos from Cursor API. Link GitHub at cursor.com/settings, or paste a repo URL:',
+                      'No repositories available. Connect GitHub in your '
+                      'workspace settings, or paste a repo URL:',
                       style:
                           TextStyle(color: Theme.of(context).colorScheme.error),
                     ),

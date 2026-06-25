@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:cursor_api_agents/cursor_api_agents.dart';
 import 'package:cursor_api_stream/cursor_api_stream.dart';
-import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:cursor_mobile_commander/core/database/database_provider.dart';
+import 'package:cursor_mobile_commander/core/storage/secure_storage_keys.dart';
+import 'package:cursor_mobile_commander/core/storage/secure_storage_service.dart';
 import 'package:cursor_mobile_commander/features/agents/presentation/agents_provider.dart';
 import 'package:cursor_mobile_commander/features/chat/domain/chat_message_model.dart';
 import 'package:cursor_mobile_commander/features/chat/domain/tool_call_model.dart';
@@ -200,7 +200,7 @@ class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
     final chatState = ref.read(chatStateProvider(agentId));
 
     if (chatState.isRunActive) {
-      chatNotifier.setError('Agent is busy. Cancel the current run first.');
+      chatNotifier.setError('Worker is busy. Cancel the current task first.');
       return;
     }
 
@@ -253,22 +253,43 @@ class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
 
   String _failureMessage(AgentFailure failure) {
     return switch (failure) {
-      AgentBusyFailure() => 'Agent is busy. Try again shortly.',
-      AgentUnauthorizedFailure() => 'API key invalid. Check settings.',
+      AgentBusyFailure() => 'Worker is busy. Try again shortly.',
+      AgentUnauthorizedFailure() => 'Connection invalid. Check settings.',
       AgentNetworkFailure(:final message) => message,
       _ => 'Request failed: $failure',
     };
   }
 }
 
-/// First pinned project repo URL for new agent creation.
-final defaultRepoUrlProvider = FutureProvider<String?>((ref) async {
-  final db = await ref.watch(appDatabaseFutureProvider.future);
-  final pinned = await (db.select(db.pinnedProjects)
-        ..orderBy([(t) => OrderingTerm.asc(t.sortOrder)]))
-      .get();
-  return pinned.isEmpty ? null : pinned.first.repoUrl;
+/// Repository URLs from the Cursor API.
+final repositoriesProvider = FutureProvider<List<String>>((ref) async {
+  final repo = await ref.watch(agentRepositoryProvider.future);
+  final result = await repo.listRepositories();
+  return result.fold(
+    (failure) => throw StateError('Could not load repositories: $failure'),
+    (page) => page.repositories
+        .map((r) => RepositoryModel.normalizeRepoUrl(r.url))
+        .where((url) => url.isNotEmpty)
+        .toList(),
+  );
 });
+
+/// Preferred repo for new commands: last used, else first from API.
+final defaultRepoUrlProvider = FutureProvider<String?>((ref) async {
+  final storage = ref.watch(secureStorageServiceProvider);
+  final lastUsed = await storage.readKey(SecureStorageKeys.lastUsedRepoUrl);
+  if (lastUsed != null && lastUsed.isNotEmpty) {
+    return lastUsed;
+  }
+  final repos = await ref.watch(repositoriesProvider.future);
+  return repos.isEmpty ? null : repos.first;
+});
+
+/// Persists the last repo used for a new command.
+Future<void> saveLastUsedRepoUrl(WidgetRef ref, String repoUrl) async {
+  final storage = ref.read(secureStorageServiceProvider);
+  await storage.writeKey(SecureStorageKeys.lastUsedRepoUrl, repoUrl);
+}
 
 final modelsProvider = FutureProvider<ModelListPage>((ref) async {
   final repo = await ref.watch(agentRepositoryProvider.future);

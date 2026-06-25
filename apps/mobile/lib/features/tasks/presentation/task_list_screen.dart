@@ -18,7 +18,7 @@ class TaskListScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Tasks')),
       body: tasksAsync.when(
-        loading: () => const LoadingSpinner(message: 'Loading runs…'),
+        loading: () => const LoadingSpinner(message: 'Loading tasks…'),
         error: (e, _) => ErrorView(
           message: e.toString(),
           onRetry: () => ref.invalidate(tasksProvider),
@@ -82,7 +82,7 @@ class _Section extends StatelessWidget {
           ...runs.map(
             (run) => ListTile(
               title: Text(run.runId),
-              subtitle: Text('Agent ${run.agentId} · ${run.status}'),
+              subtitle: Text('Worker ${run.agentId} · ${run.status}'),
               onTap: () => onTap(run),
             ),
           ),

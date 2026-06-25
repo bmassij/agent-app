@@ -43,17 +43,27 @@ void main() {
         location: Routes.onboarding,
       );
 
-      expect(result, Routes.homeProjects);
+      expect(result, Routes.homeWorkers);
     });
 
-    test('redirects /home to projects tab', () {
+    test('redirects /home to workers tab', () {
       final result = authRedirect(
         auth: const AsyncData(true),
         onboarding: const AsyncData(true),
         location: Routes.home,
       );
 
-      expect(result, Routes.homeProjects);
+      expect(result, Routes.homeWorkers);
+    });
+
+    test('redirects legacy /home/agents paths to workers', () {
+      final result = authRedirect(
+        auth: const AsyncData(true),
+        onboarding: const AsyncData(true),
+        location: '/home/agents/abc/chat',
+      );
+
+      expect(result, '/home/workers/abc/chat');
     });
 
     test('returns null while auth is loading', () {

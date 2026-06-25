@@ -25,9 +25,9 @@ class AgentDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: agentAsync.when(
-          data: (a) => Text(a?.name ?? 'Agent'),
-          loading: () => const Text('Agent'),
-          error: (_, __) => const Text('Agent'),
+          data: (a) => Text(a?.name ?? 'Worker'),
+          loading: () => const Text('Worker'),
+          error: (_, __) => const Text('Worker'),
         ),
         actions: [
           IconButton(
@@ -44,7 +44,7 @@ class AgentDetailScreen extends ConsumerWidget {
         ),
         data: (agent) {
           if (agent == null) {
-            return const ErrorView(message: 'Agent not found');
+            return const ErrorView(message: 'Worker not found');
           }
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -63,7 +63,7 @@ class AgentDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Runs',
+                'Task history',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
@@ -72,7 +72,7 @@ class AgentDetailScreen extends ConsumerWidget {
                 error: (e, _) => Text(e.toString()),
                 data: (runs) {
                   if (runs.isEmpty) {
-                    return const Text('No runs recorded yet.');
+                    return const Text('No tasks recorded yet.');
                   }
                   return Column(
                     children: runs

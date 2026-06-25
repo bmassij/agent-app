@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Cursor Mobile Commander</string>
+	<string>Aivance</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -67,9 +67,9 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Camera access is used to scan QR codes for transferring your Cursor API key.</string>
+	<string>Camera access is used to scan QR codes for transferring your workspace connection.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Face ID is used to unlock Cursor Mobile Commander and protect your API keys.</string>
+	<string>Face ID is used to unlock Aivance and protect your connections.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

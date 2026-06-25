@@ -19,7 +19,7 @@ class AgentListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agents'),
+        title: const Text('Workers'),
         actions: [
           IconButton(
             icon: const Icon(Icons.task_alt_outlined),
@@ -42,7 +42,7 @@ class AgentListScreen extends ConsumerWidget {
         label: const Text('New command'),
       ),
       body: agentsAsync.when(
-        loading: () => const LoadingSpinner(message: 'Loading agents…'),
+        loading: () => const LoadingSpinner(message: 'Loading workers…'),
         error: (e, _) => ErrorView(
           message: e.toString(),
           onRetry: () => ref.read(agentListProvider.notifier).refresh(),
@@ -53,7 +53,7 @@ class AgentListScreen extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('No agents yet'),
+                  const Text('No workers yet'),
                   const SizedBox(height: 12),
                   FilledButton(
                     onPressed: () => showNewAgentSheet(context, ref),

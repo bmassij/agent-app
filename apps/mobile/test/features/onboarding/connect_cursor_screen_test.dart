@@ -9,7 +9,8 @@ void main() {
       const MaterialApp(home: ConnectCursorScreen()),
     );
 
-    expect(find.text('Connect Cursor'), findsOneWidget);
-    expect(find.text('Enter API key'), findsOneWidget);
+    expect(find.text('Connect workspace'), findsOneWidget);
+    expect(find.text('Scan QR code'), findsOneWidget);
+    expect(find.text('Enter connection manually'), findsOneWidget);
   });
 }

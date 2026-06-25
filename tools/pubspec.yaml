@@ -1,0 +1,10 @@
+name: cursor_mc_tools
+description: Desktop helpers for Aivance Core
+publish_to: none
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  image: ^4.5.4
+  qr: ^3.0.2

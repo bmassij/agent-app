@@ -1,6 +1,8 @@
-# Cursor Mobile Commander
+# Aivance Core
 
-Native Flutter mobile client for managing Cursor Background Cloud Agents from your phone.
+**Aivance Core** is the technical foundation of the [Aivance](docs/vision/AIVANCE_MASTER_VISION.md) platform — a Flutter/Dart monorepo for delegating digital work from mobile and desktop clients.
+
+Formerly known as *Cursor Mobile Commander*, Core provides workspace connection, task delegation, real-time monitoring, and GitHub integration while keeping execution provider details invisible to end users.
 
 ## Quick Start
 
@@ -9,7 +11,7 @@ Native Flutter mobile client for managing Cursor Background Cloud Agents from yo
 dart pub global activate melos
 
 git clone https://github.com/bmassij/agent-app.git
-cd agent-app
+cd agent-app/cursor-mobile-commander
 melos bootstrap
 
 # Generate Android/iOS platform folders (first time only)
@@ -26,16 +28,23 @@ cd apps/mobile && flutter run
 
 | Document | Purpose |
 |---|---|
-| [MASTER_BUILD_PLAN.md](MASTER_BUILD_PLAN.md) | Single source of truth for agents |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design |
-| [docs/AGENT_GUIDE.md](docs/AGENT_GUIDE.md) | How to add features |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | Sprint progress |
-| [docs/IMPLEMENTATION_NOTES.md](docs/IMPLEMENTATION_NOTES.md) | Sprint handoff notes |
+| [AIVANCE_MASTER_VISION.md](docs/vision/AIVANCE_MASTER_VISION.md) | Platform vision and product philosophy |
+| [AIVANCE_ARCHITECTURE.md](docs/architecture/AIVANCE_ARCHITECTURE.md) | System design |
+| [AIVANCE_DEVELOPMENT_GUIDE.md](docs/development/AIVANCE_DEVELOPMENT_GUIDE.md) | Binding rules for contributors |
+| [AIVANCE_CORE_MIGRATION_PLAN.md](docs/architecture/AIVANCE_CORE_MIGRATION_PLAN.md) | CMC → Aivance Core migration phases |
+| [ARCHITECTURE_AUDIT.md](docs/ARCHITECTURE_AUDIT.md) | Immutable baseline audit (2026-06-25) |
+| [FEATURE_STATUS.md](docs/FEATURE_STATUS.md) | Living feature status vs code |
 
-## Sprint Status
+## Migration Status
 
-**Sprint 1 (Foundation):** Complete — app shell, navigation, theme, package scaffolds.
+| Phase | Status |
+|-------|--------|
+| **M1** Terminology & branding | Complete |
+| M2 Package cleanup & hardening | Planned |
+| M3 Provider abstraction | Planned |
 
-**Sprint 2 (Auth + Database):** Complete — Drift DB, API key setup, biometrics, GitHub OAuth PKCE, onboarding wired.
+See [docs/operations/M1_COMPLETION_REPORT.md](docs/operations/M1_COMPLETION_REPORT.md) for M1 details.
 
-**Sprint 3 (API Packages):** Next — Cursor/GitHub API client packages.
+## Sprint Status (legacy)
+
+Core functionality from Sprint 1–4 remains operational: auth, onboarding, workers/tasks, chat SSE, orchestrator dispatch, GitHub OAuth, Drift persistence.

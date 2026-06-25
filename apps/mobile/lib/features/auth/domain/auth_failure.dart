@@ -4,7 +4,7 @@ sealed class AuthFailure implements Exception {
 }
 
 class InvalidKeyFailure extends AuthFailure {
-  const InvalidKeyFailure([this.message = 'Invalid API key']);
+  const InvalidKeyFailure([this.message = 'Invalid access code']);
 
   final String message;
 }

@@ -62,7 +62,7 @@ class AuthRepositoryImpl implements AuthRepository {
   ) async {
     final trimmed = key.trim();
     if (trimmed.isEmpty) {
-      return left(const InvalidKeyFailure('API key is required'));
+      return left(const InvalidKeyFailure('Access code is required'));
     }
     try {
       final me = await _remote.fetchMe(trimmed);
@@ -148,7 +148,7 @@ class AuthRepositoryImpl implements AuthRepository {
         );
       }
       final ok = await _localAuth.authenticate(
-        localizedReason: 'Unlock Cursor Mobile Commander',
+        localizedReason: 'Unlock Aivance',
         options: const AuthenticationOptions(
           stickyAuth: true,
           biometricOnly: false,

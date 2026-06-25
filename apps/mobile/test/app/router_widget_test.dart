@@ -9,6 +9,8 @@ import 'package:cursor_mobile_commander/core/database/app_database.dart';
 import 'package:cursor_mobile_commander/core/database/database_provider.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_keys.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_service.dart';
+import 'package:cursor_mobile_commander/features/agents/domain/agent_model.dart';
+import 'package:cursor_mobile_commander/features/agents/presentation/agents_provider.dart';
 import 'package:cursor_mobile_commander/features/auth/data/auth_remote_source.dart';
 import 'package:cursor_mobile_commander/features/auth/presentation/auth_provider.dart';
 import 'package:cursor_mobile_commander/features/onboarding/presentation/onboarding_provider.dart';
@@ -32,6 +34,16 @@ class _FakeOnboarding extends OnboardingNotifier {
 
   @override
   Future<bool> build() async => _done;
+}
+
+class _FakeAgentList extends AgentListNotifier {
+  @override
+  Future<List<AgentSession>> build() async => [];
+
+  @override
+  Future<void> refresh() async {
+    state = const AsyncData([]);
+  }
 }
 
 void main() {
@@ -63,11 +75,11 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    expect(find.text('Cursor Mobile Commander'), findsOneWidget);
+    expect(find.text('Delegate work from your phone'), findsOneWidget);
     container.dispose();
   });
 
-  testWidgets('shows projects tab when onboarded with API key', (tester) async {
+  testWidgets('shows agents tab when onboarded with API key', (tester) async {
     final storage = _InMemorySecureStorage();
     await storage.writeKey(SecureStorageKeys.cursorApiKey, 'cursor_test_key');
     final db = AppDatabase.inMemory();
@@ -88,6 +100,7 @@ void main() {
         appDatabaseFutureProvider.overrideWith((ref) async => db),
         authRemoteSourceProvider.overrideWithValue(AuthRemoteSource()),
         onboardingCompletedProvider.overrideWith(() => _FakeOnboarding(true)),
+        agentListProvider.overrideWith(() => _FakeAgentList()),
       ],
     );
 
@@ -107,7 +120,7 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    expect(find.text('Projects — coming in Sprint 5'), findsOneWidget);
+    expect(find.text('No workers yet'), findsOneWidget);
     container.dispose();
   });
 }

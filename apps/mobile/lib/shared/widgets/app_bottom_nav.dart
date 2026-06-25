@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:cursor_mobile_commander/app/routes.dart';
 import 'package:cursor_mobile_commander/shared/constants/colors.dart';
 
-/// Bottom navigation bar for the home shell (Projects, Agents, Settings).
+/// Bottom navigation bar for the home shell (Projects, Workers, Settings).
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     required this.currentIndex,
@@ -18,7 +18,7 @@ class AppBottomNav extends StatelessWidget {
       case 0:
         context.go(Routes.homeProjects);
       case 1:
-        context.go(Routes.homeAgents);
+        context.go(Routes.homeWorkers);
       case 2:
         context.go(Routes.homeSettings);
     }
@@ -40,7 +40,7 @@ class AppBottomNav extends StatelessWidget {
         NavigationDestination(
           icon: Icon(Icons.smart_toy_outlined),
           selectedIcon: Icon(Icons.smart_toy),
-          label: 'Agents',
+          label: 'Workers',
         ),
         NavigationDestination(
           icon: Icon(Icons.settings_outlined),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Shared color tokens for Cursor Mobile Commander (dark theme).
+/// Shared color tokens for Aivance (dark theme).
 abstract final class AppColors {
   static const Color background = Color(0xFF0D0D0D);
   static const Color card = Color(0xFF1A1A1A);

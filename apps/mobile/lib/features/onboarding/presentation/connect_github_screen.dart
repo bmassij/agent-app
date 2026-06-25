@@ -70,8 +70,8 @@ class _ConnectGithubScreenState extends ConsumerState<ConnectGithubScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Connect GitHub so agents can access your repositories. '
-              'Uses OAuth with PKCE — no backend required.',
+              'Connect GitHub so your digital workers can access your '
+              'repositories. Uses OAuth with PKCE — no backend required.',
             ),
             const SizedBox(height: AppSizes.paddingLarge),
             githubAsync.when(

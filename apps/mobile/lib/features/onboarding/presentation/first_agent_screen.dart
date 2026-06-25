@@ -36,8 +36,7 @@ class FirstAgentScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              "You're set up! Create your first agent from the Agents tab "
-              'once Sprint 4 ships. For now, explore your project dashboard.',
+              "You're set up! Delegate your first task from the Workers tab.",
             ),
             const Spacer(),
             FilledButton(
