@@ -39,7 +39,7 @@ class AgentListScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => showNewAgentSheet(context, ref),
         icon: const Icon(Icons.add),
-        label: const Text('New agent'),
+        label: const Text('New command'),
       ),
       body: agentsAsync.when(
         loading: () => const LoadingSpinner(message: 'Loading agents…'),
@@ -57,7 +57,7 @@ class AgentListScreen extends ConsumerWidget {
                   const SizedBox(height: 12),
                   FilledButton(
                     onPressed: () => showNewAgentSheet(context, ref),
-                    child: const Text('Create your first agent'),
+                    child: const Text('Send your first command'),
                   ),
                 ],
               ),
@@ -74,7 +74,7 @@ class AgentListScreen extends ConsumerWidget {
                   title: Text(agent.name),
                   subtitle: Text(agent.agentId),
                   trailing: AgentStatusChip(status: agent.status),
-                  onTap: () => context.push(Routes.agentDetail(agent.agentId)),
+                  onTap: () => context.push(Routes.agentChat(agent.agentId)),
                 );
               },
             ),

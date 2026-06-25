@@ -46,17 +46,27 @@ POST /v1/agents
 Body:
 ```json
 {
-  "repos": [{ "url": "https://github.com/owner/repo" }],
-  "messages": [{ "role": "user", "content": "..." }],
-  "model": "claude-sonnet-4-5",
+  "prompt": { "text": "..." },
+  "repos": [{ "url": "https://github.com/owner/repo", "startingRef": "main", "prUrl": "https://github.com/owner/repo/pull/42" }],
+  "prompt": { "text": "...", "images": [{ "data": "...", "mimeType": "image/png" }] },
+  "env": { "type": "cloud", "name": "my-saved-environment" },
+  "envVars": { "API_KEY": "..." },
+  "model": { "id": "composer-2", "params": [{ "id": "fast", "value": true }] },
   "mode": "agent",
-  "options": {
-    "autoCreatePr": true,
-    "workOnCurrentBranch": false
-  }
+  "autoCreatePR": false,
+  "workOnCurrentBranch": false,
+  "mcpServers": []
 }
 ```
-Returns: `{ "agentId": "...", "runId": "..." }`
+Returns:
+```json
+{
+  "agent": { "id": "bc-...", "status": "ACTIVE", "latestRunId": "run-..." },
+  "run": { "id": "run-...", "status": "CREATING" }
+}
+```
+
+List response uses `{ "items": [ ... ] }`.
 
 #### List Models
 ```
@@ -93,7 +103,13 @@ POST /v1/agents/{agentId}/runs
 Body:
 ```json
 {
-  "messages": [{ "role": "user", "content": "..." }]
+  "prompt": { "text": "..." }
+}
+```
+Returns:
+```json
+{
+  "run": { "id": "run-...", "status": "CREATING" }
 }
 ```
 Returns 409 `agent_busy` if a run is still active. UI disables send button until run is terminal.
@@ -122,12 +138,13 @@ SSE Event Types:
 
 | Event Type | Payload | Action |
 |---|---|---|
-| `assistant` | `{ delta: string }` | Append to current assistant bubble |
-| `thinking` | `{ delta: string }` | Show in collapsible thinking block |
-| `tool_call` | `{ callId, name, status, args?, result? }` | Render tool call chip |
-| `status` | `{ status: string }` | Update run status indicator |
-| `interaction_update` | `{ ... }` | Update tool call chip state |
-| `result` | `{ text: string }` | Final complete text (may be truncated) |
+| `assistant` | `{ text: string }` | Append to current assistant bubble |
+| `thinking` | `{ text: string }` | Show in collapsible thinking block |
+| `tool_call` | `{ callId, name, status, args?, result?, truncated? }` | Render tool call chip |
+| `status` | `{ runId, status }` | Update run status indicator |
+| `interaction_update` | `{ type, ... }` | Optional SDK-shaped stream events |
+| `heartbeat` | `{}` | Keepalive — ignore in UI |
+| `result` | `{ runId, status, text?, durationMs?, git? }` | Final complete text |
 | `done` | `{}` | Close stream; fetch /usage |
 | `error` | `{ code, message }` | Map to CursorRunFailure; show error UI |
 

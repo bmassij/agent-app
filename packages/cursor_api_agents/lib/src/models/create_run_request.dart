@@ -1,20 +1,28 @@
+import 'package:cursor_api_agents/src/models/prompt_image.dart';
+
 class CreateRunRequest {
-  const CreateRunRequest({required this.messages});
+  const CreateRunRequest({
+    required this.prompt,
+    this.images,
+    this.mode,
+    this.mcpServers,
+  });
 
   Map<String, dynamic> toJson() {
     return {
-      'messages': messages
-          .map((m) => {'role': m.role, 'content': m.content})
-          .toList(),
+      'prompt': {
+        'text': prompt,
+        if (images != null && images!.isNotEmpty)
+          'images': images!.map((i) => i.toJson()).toList(),
+      },
+      if (mode != null) 'mode': mode,
+      if (mcpServers != null && mcpServers!.isNotEmpty)
+        'mcpServers': mcpServers,
     };
   }
 
-  final List<RunMessage> messages;
-}
-
-class RunMessage {
-  const RunMessage({required this.role, required this.content});
-
-  final String role;
-  final String content;
+  final String prompt;
+  final List<PromptImage>? images;
+  final String? mode;
+  final List<Map<String, dynamic>>? mcpServers;
 }

@@ -56,9 +56,16 @@ class CreateRunResult {
   });
 
   factory CreateRunResult.fromJson(Map<String, dynamic> json) {
+    final run = json['run'] as Map<String, dynamic>?;
+
     return CreateRunResult(
-      runId: json['runId'] as String? ?? json['id'] as String? ?? '',
-      status: json['status'] as String? ?? 'creating',
+      runId: json['runId'] as String? ??
+          run?['id'] as String? ??
+          json['id'] as String? ??
+          '',
+      status: json['status'] as String? ??
+          run?['status'] as String? ??
+          'creating',
     );
   }
 

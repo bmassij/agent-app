@@ -128,6 +128,64 @@ class GithubRepositoryImpl implements GithubRepository {
     });
   }
 
+  @override
+  Future<Either<GithubApiError, List<GithubBranchModel>>> listBranches(
+    String owner,
+    String repo,
+  ) {
+    return _guard(() async {
+      final list = await _client.getList(
+        '/repos/$owner/$repo/branches',
+        queryParameters: {'per_page': 100},
+      );
+      return list
+          .whereType<Map<String, dynamic>>()
+          .map(GithubBranchModel.fromJson)
+          .toList();
+    });
+  }
+
+  @override
+  Future<Either<GithubApiError, GithubFileContent>> getFileContent(
+    String owner,
+    String repo,
+    String path, {
+    String? ref,
+  }) {
+    return _guard(() async {
+      final data = await _client.get(
+        '/repos/$owner/$repo/contents/$path',
+        queryParameters: ref != null ? {'ref': ref} : null,
+      );
+      return GithubFileContent.fromJson(data);
+    });
+  }
+
+  @override
+  Future<Either<GithubApiError, GithubCheckStatus>> getCombinedStatus(
+    String owner,
+    String repo,
+    String ref,
+  ) {
+    return _guard(() async {
+      final data = await _client.get(
+        '/repos/$owner/$repo/commits/$ref/status',
+      );
+      final state = data['state'] as String? ?? 'unknown';
+      final statuses = data['statuses'] as List<dynamic>? ?? [];
+      final failing = statuses
+          .whereType<Map<String, dynamic>>()
+          .where((s) => (s['state'] as String?) == 'failure')
+          .map((s) => s['context'] as String? ?? 'check')
+          .toList();
+      return GithubCheckStatus(
+        state: state,
+        totalCount: data['total_count'] as int?,
+        failingContexts: failing.isEmpty ? null : failing,
+      );
+    });
+  }
+
   Future<Either<GithubApiError, T>> _guard<T>(Future<T> Function() action) async {
     try {
       return right(await action());

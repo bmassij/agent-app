@@ -1,8 +1,8 @@
+import 'package:commander_orchestrator/commander_orchestrator.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart' as api;
 import 'package:fpdart/fpdart.dart';
 
-import 'package:cursor_mobile_commander/features/agents/data/agent_local_source.dart';
-import 'package:cursor_mobile_commander/features/agents/domain/agent_failure.dart';
+import 'package:cursor_mobile_commander/features/agents/data/agent_local_source.dart';import 'package:cursor_mobile_commander/features/agents/domain/agent_failure.dart';
 import 'package:cursor_mobile_commander/features/agents/domain/agent_model.dart';
 import 'package:cursor_mobile_commander/features/agents/domain/agent_repository.dart';
 import 'package:cursor_mobile_commander/features/agents/domain/run_model.dart';
@@ -11,12 +11,14 @@ class AgentRepositoryImpl implements AgentRepository {
   AgentRepositoryImpl({
     required api.AgentRepository apiRepository,
     required AgentLocalSource localSource,
+    AgentCommandOrchestrator? orchestrator,
   })  : _api = apiRepository,
-        _local = localSource;
+        _local = localSource,
+        _orchestrator = orchestrator;
 
   final api.AgentRepository _api;
   final AgentLocalSource _local;
-
+  final AgentCommandOrchestrator? _orchestrator;
   @override
   Stream<List<AgentSession>> watchAgents() => _local.watchAgents();
 
@@ -89,23 +91,90 @@ class AgentRepositoryImpl implements AgentRepository {
     String? mode,
     bool? autoCreatePr,
     bool? workOnCurrentBranch,
+    String? startingRef,
+    String? prUrl,
+    List<api.PromptImage>? images,
   }) async {
+    if (_orchestrator != null) {
+      final dispatched = await dispatchCommand(
+        projectId: projectId,
+        input: CommandInput(
+          userPrompt: prompt,
+          repoUrl: repoUrl,
+          branch: startingRef,
+          prUrl: prUrl,
+          images: images,
+          modelId: model,
+          mode: mode,
+          autoCreatePr: autoCreatePr,
+          workOnCurrentBranch: workOnCurrentBranch,
+        ),
+      );
+      return dispatched.fold(
+        left,
+        (result) => right(
+          api.CreateAgentResult(
+            agentId: result.agentId,
+            runId: result.runId,
+            status: result.status,
+          ),
+        ),
+      );
+    }
+
     final result = await _api.createAgent(
-      api.CreateAgentRequest(
-        repos: [repoUrl],
-        messages: [api.AgentMessage(role: 'user', content: prompt)],
-        model: model,
+      api.CreateAgentRequest.singleRepo(
+        repoUrl: repoUrl,
+        prompt: prompt,
+        startingRef: startingRef,
+        prUrl: prUrl,
+        images: images,
+        modelId: model,
         mode: mode,
         autoCreatePr: autoCreatePr,
         workOnCurrentBranch: workOnCurrentBranch,
       ),
     );
 
+    return _persistCreate(projectId, prompt, result);
+  }
+
+  @override
+  Future<Either<AgentFailure, CommandDispatchResult>> dispatchCommand({
+    required String projectId,
+    required CommandInput input,
+  }) async {
+    final orchestrator = _orchestrator;
+    if (orchestrator == null) {
+      return left(const api.AgentUnknownFailure('Orchestrator not configured'));
+    }
+
+    final dispatched = await orchestrator.dispatch(input);
+    return dispatched.fold(
+      (msg) => left(api.AgentUnknownFailure(msg)),
+      (result) async {
+        final apiResult = api.CreateAgentResult(
+          agentId: result.agentId,
+          runId: result.runId,
+          status: result.status,
+        );
+        await _persistCreate(projectId, input.userPrompt, right(apiResult));
+        return right(result);
+      },
+    );
+  }
+
+  Future<Either<AgentFailure, api.CreateAgentResult>> _persistCreate(
+    String projectId,
+    String prompt,
+    Either<AgentFailure, api.CreateAgentResult> result,
+  ) async {
     return result.fold(
       left,
       (created) async {
         final now = DateTime.now().toUtc();
-        final name = prompt.length > 48 ? '${prompt.substring(0, 48)}…' : prompt;
+        final name =
+            prompt.length > 48 ? '${prompt.substring(0, 48)}…' : prompt;
         await _local.upsertAgent(
           agentId: created.agentId,
           projectId: projectId,
@@ -125,42 +194,63 @@ class AgentRepositoryImpl implements AgentRepository {
       },
     );
   }
-
   @override
   Future<Either<AgentFailure, api.CreateRunResult>> createRun({
     required String agentId,
     required String prompt,
+    String? mode,
+    List<api.PromptImage>? images,
+    String? repoUrl,
   }) async {
+    if (_orchestrator != null) {
+      final input = CommandInput(
+        userPrompt: prompt,
+        repoUrl: repoUrl ?? 'https://github.com/unknown/repo',
+        mode: mode,
+        images: images,
+        existingAgentId: agentId,
+      );
+      final dispatched = await _orchestrator.dispatch(input);
+      return dispatched.fold(
+        (msg) => left(api.AgentUnknownFailure(msg)),
+        (result) async {
+          final run = api.CreateRunResult(
+            runId: result.runId,
+            status: result.status ?? 'CREATING',
+          );
+          return _persistRun(agentId, run);
+        },
+      );
+    }
+
     final result = await _api.createRun(
       agentId,
-      api.CreateRunRequest(
-        messages: [api.RunMessage(role: 'user', content: prompt)],
-      ),
+      api.CreateRunRequest(prompt: prompt, mode: mode, images: images),
     );
-
-    return result.fold(
-      left,
-      (run) async {
-        final now = DateTime.now().toUtc();
-        await _local.upsertRun(
-          runId: run.runId,
-          agentId: agentId,
-          status: run.status,
-          createdAt: now,
-        );
-        await _local.upsertAgent(
-          agentId: agentId,
-          projectId: (await _local.getAgent(agentId))?.projectId ?? 'default',
-          name: (await _local.getAgent(agentId))?.name ?? 'Agent',
-          status: run.status,
-          latestRunId: run.runId,
-          updatedAt: now,
-        );
-        return right(run);
-      },
-    );
+    return result.fold(left, (run) => _persistRun(agentId, run));
   }
 
+  Future<Either<AgentFailure, api.CreateRunResult>> _persistRun(
+    String agentId,
+    api.CreateRunResult run,
+  ) async {
+    final now = DateTime.now().toUtc();
+    await _local.upsertRun(
+      runId: run.runId,
+      agentId: agentId,
+      status: run.status,
+      createdAt: now,
+    );
+    await _local.upsertAgent(
+      agentId: agentId,
+      projectId: (await _local.getAgent(agentId))?.projectId ?? 'default',
+      name: (await _local.getAgent(agentId))?.name ?? 'Agent',
+      status: run.status,
+      latestRunId: run.runId,
+      updatedAt: now,
+    );
+    return right(run);
+  }
   @override
   Future<Either<AgentFailure, Unit>> cancelRun({
     required String agentId,
@@ -231,5 +321,10 @@ class AgentRepositoryImpl implements AgentRepository {
   @override
   Future<Either<AgentFailure, api.ModelListPage>> listModels() {
     return _api.listModels();
+  }
+
+  @override
+  Future<Either<AgentFailure, api.RepositoryListPage>> listRepositories() {
+    return _api.listRepositories();
   }
 }

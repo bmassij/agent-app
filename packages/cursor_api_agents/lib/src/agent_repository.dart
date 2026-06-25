@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 
 import 'package:cursor_api_agents/src/errors/agent_failure.dart';
 import 'package:cursor_api_agents/src/models/agent_model.dart';
+import 'package:cursor_api_agents/src/models/artifact_download_result.dart';
 import 'package:cursor_api_agents/src/models/artifact_model.dart';
 import 'package:cursor_api_agents/src/models/create_agent_request.dart';
 import 'package:cursor_api_agents/src/models/create_run_request.dart';
@@ -12,7 +13,11 @@ import 'package:cursor_api_agents/src/models/usage_model.dart';
 
 /// Cursor agent and run operations (API_GUIDE.md).
 abstract interface class AgentRepository {
-  Future<Either<AgentFailure, AgentListPage>> listAgents({String? cursor});
+  Future<Either<AgentFailure, AgentListPage>> listAgents({
+    String? cursor,
+    String? prUrl,
+    bool? includeArchived,
+  });
 
   Future<Either<AgentFailure, AgentModel>> getAgent(String agentId);
 
@@ -41,4 +46,9 @@ abstract interface class AgentRepository {
   Future<Either<AgentFailure, UsageModel>> getUsage(String agentId);
 
   Future<Either<AgentFailure, ArtifactListPage>> listArtifacts(String agentId);
+
+  Future<Either<AgentFailure, ArtifactDownloadResult>> downloadArtifact(
+    String agentId,
+    String path,
+  );
 }

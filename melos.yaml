@@ -2,6 +2,7 @@ name: cursor_mobile_commander
 
 packages:
   - apps/mobile
+  - apps/desktop
   - packages/**
 
 scripts:

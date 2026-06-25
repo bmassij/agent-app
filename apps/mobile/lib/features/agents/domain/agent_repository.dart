@@ -1,3 +1,4 @@
+import 'package:commander_orchestrator/commander_orchestrator.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -22,13 +23,23 @@ abstract interface class AgentRepository {
     String? mode,
     bool? autoCreatePr,
     bool? workOnCurrentBranch,
+    String? startingRef,
+    String? prUrl,
+    List<PromptImage>? images,
+  });
+
+  Future<Either<AgentFailure, CommandDispatchResult>> dispatchCommand({
+    required String projectId,
+    required CommandInput input,
   });
 
   Future<Either<AgentFailure, CreateRunResult>> createRun({
     required String agentId,
     required String prompt,
+    String? mode,
+    List<PromptImage>? images,
+    String? repoUrl,
   });
-
   Future<Either<AgentFailure, Unit>> cancelRun({
     required String agentId,
     required String runId,
@@ -42,4 +53,6 @@ abstract interface class AgentRepository {
   });
 
   Future<Either<AgentFailure, ModelListPage>> listModels();
+
+  Future<Either<AgentFailure, RepositoryListPage>> listRepositories();
 }

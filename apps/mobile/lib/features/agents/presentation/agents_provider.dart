@@ -1,7 +1,9 @@
+import 'package:commander_orchestrator/commander_orchestrator.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart' as api;
 import 'package:cursor_api_core/cursor_api_core.dart';
 import 'package:cursor_api_stream/cursor_api_stream.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:github_api/github_api.dart';
 
 import 'package:cursor_mobile_commander/core/database/database_provider.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_keys.dart';
@@ -32,10 +34,38 @@ final agentLocalSourceProvider = FutureProvider<AgentLocalSource>((ref) async {
   return AgentLocalSource(db);
 });
 
+final githubAccessTokenProvider = FutureProvider<String?>((ref) async {
+  final storage = ref.watch(secureStorageServiceProvider);
+  return storage.readKey(SecureStorageKeys.githubAccessToken);
+});
+
+final githubRepositoryProvider = FutureProvider<GithubRepository?>((ref) async {
+  final token = await ref.watch(githubAccessTokenProvider.future);
+  if (token == null || token.isEmpty) {
+    return null;
+  }
+  return GithubRepositoryImpl(GithubHttpClient(accessToken: token));
+});
+
+final commandOrchestratorProvider =
+    FutureProvider<AgentCommandOrchestrator>((ref) async {
+  final apiRepo = await ref.watch(apiAgentRepositoryProvider.future);
+  final github = await ref.watch(githubRepositoryProvider.future);
+  return AgentCommandOrchestrator(
+    agents: apiRepo,
+    github: github,
+  );
+});
+
 final agentRepositoryProvider = FutureProvider<AgentRepository>((ref) async {
   final apiRepo = await ref.watch(apiAgentRepositoryProvider.future);
   final local = await ref.watch(agentLocalSourceProvider.future);
-  return AgentRepositoryImpl(apiRepository: apiRepo, localSource: local);
+  final orchestrator = await ref.watch(commandOrchestratorProvider.future);
+  return AgentRepositoryImpl(
+    apiRepository: apiRepo,
+    localSource: local,
+    orchestrator: orchestrator,
+  );
 });
 
 final runStreamServiceProvider = FutureProvider<RunStreamService>((ref) async {

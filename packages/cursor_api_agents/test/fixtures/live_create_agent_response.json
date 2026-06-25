@@ -1,0 +1,27 @@
+{
+  "agent": {
+    "id": "bc-8894ba09-4ad1-4e12-b8ea-58b4b3f24274",
+    "name": "Sprint 4 validation response",
+    "status": "ACTIVE",
+    "env": { "type": "cloud" },
+    "repos": [
+      {
+        "url": "https://github.com/bmassij/spaansetuin-enzo-next",
+        "startingRef": "main"
+      }
+    ],
+    "workOnCurrentBranch": false,
+    "autoCreatePR": false,
+    "url": "https://cursor.com/agents/bc-8894ba09-4ad1-4e12-b8ea-58b4b3f24274",
+    "createdAt": "2026-06-22T23:59:19.833Z",
+    "updatedAt": "2026-06-22T23:59:23.922Z",
+    "latestRunId": "run-33670876-265f-4f39-9fb7-67253c272300"
+  },
+  "run": {
+    "id": "run-33670876-265f-4f39-9fb7-67253c272300",
+    "agentId": "bc-8894ba09-4ad1-4e12-b8ea-58b4b3f24274",
+    "status": "CREATING",
+    "createdAt": "2026-06-22T23:59:19.833Z",
+    "updatedAt": "2026-06-22T23:59:19.833Z"
+  }
+}

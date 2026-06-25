@@ -1,0 +1,7 @@
+dependency_overrides:
+  cursor_api_agents:
+    path: ../../packages/cursor_api_agents
+  cursor_api_core:
+    path: ../../packages/cursor_api_core
+  cursor_api_stream:
+    path: ../../packages/cursor_api_stream

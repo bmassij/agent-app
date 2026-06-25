@@ -34,8 +34,8 @@ void main() {
       ),
     ).thenAnswer(
       (_) async => _jsonResponse({
-        'agents': [
-          {'agentId': 'a1', 'status': 'idle'},
+        'items': [
+          {'id': 'a1', 'status': 'idle'},
         ],
       }),
     );
@@ -66,8 +66,8 @@ void main() {
 
     final result = await repo.createAgent(
       const CreateAgentRequest(
-        repos: ['https://github.com/o/r'],
-        messages: [AgentMessage(role: 'user', content: 'hi')],
+        repos: [AgentRepoConfig(url: 'https://github.com/o/r')],
+        prompt: 'hi',
       ),
     );
     result.fold(

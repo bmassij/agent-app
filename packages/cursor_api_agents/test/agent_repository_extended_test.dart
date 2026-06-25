@@ -68,6 +68,33 @@ void main() {
     );
   });
 
+  test('listRepositories parses items array and bare github urls', () async {
+    when(
+      () => dio.get<dynamic>(
+        '/repositories',
+        queryParameters: any(named: 'queryParameters'),
+        options: any(named: 'options'),
+      ),
+    ).thenAnswer(
+      (_) async => _jsonResponse({
+        'items': [
+          {'url': 'github.com/o/r2'},
+          'https://github.com/o/r3',
+        ],
+      }),
+    );
+
+    final result = await repo.listRepositories();
+    result.fold(
+      (_) => fail('expected right'),
+      (page) {
+        expect(page.repositories, hasLength(2));
+        expect(page.repositories.first.url, 'https://github.com/o/r2');
+        expect(page.repositories.last.url, 'https://github.com/o/r3');
+      },
+    );
+  });
+
   test('getUsage returns usage rows', () async {
     when(
       () => dio.get<dynamic>(
@@ -142,13 +169,16 @@ void main() {
         options: any(named: 'options'),
       ),
     ).thenAnswer(
-      (_) async => _jsonResponse({'agentId': 'a2', 'runId': 'r1'}),
+      (_) async => _jsonResponse({
+        'agent': {'id': 'a2'},
+        'run': {'id': 'r1', 'status': 'CREATING'},
+      }),
     );
 
     final result = await repo.createAgent(
       const CreateAgentRequest(
-        repos: ['https://github.com/o/r'],
-        messages: [AgentMessage(role: 'user', content: 'hi')],
+        repos: [AgentRepoConfig(url: 'https://github.com/o/r')],
+        prompt: 'hi',
       ),
     );
     result.fold(
@@ -165,16 +195,14 @@ void main() {
         options: any(named: 'options'),
       ),
     ).thenAnswer(
-      (_) async => _jsonResponse({'runId': 'r2', 'status': 'running'}),
+      (_) async => _jsonResponse({
+        'run': {'id': 'r2', 'status': 'running'},
+      }),
     );
 
     final result = await repo.createRun(
       'a1',
-      const CreateRunRequest(
-        messages: [
-          RunMessage(role: 'user', content: 'follow up'),
-        ],
-      ),
+      const CreateRunRequest(prompt: 'follow up'),
     );
     result.fold(
       (_) => fail('expected right'),

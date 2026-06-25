@@ -44,4 +44,22 @@ abstract interface class GithubRepository {
     String? branch,
     int page,
   });
+
+  Future<Either<GithubApiError, List<GithubBranchModel>>> listBranches(
+    String owner,
+    String repo,
+  );
+
+  Future<Either<GithubApiError, GithubFileContent>> getFileContent(
+    String owner,
+    String repo,
+    String path, {
+    String? ref,
+  });
+
+  Future<Either<GithubApiError, GithubCheckStatus>> getCombinedStatus(
+    String owner,
+    String repo,
+    String ref,
+  );
 }

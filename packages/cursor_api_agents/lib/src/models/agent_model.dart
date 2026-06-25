@@ -34,7 +34,8 @@ class AgentListPage {
   });
 
   factory AgentListPage.fromJson(Map<String, dynamic> json) {
-    final items = json['agents'] as List<dynamic>? ??
+    final items = json['items'] as List<dynamic>? ??
+        json['agents'] as List<dynamic>? ??
         json['data'] as List<dynamic>? ??
         [];
     return AgentListPage(

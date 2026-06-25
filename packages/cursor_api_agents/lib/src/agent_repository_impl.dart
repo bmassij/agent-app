@@ -4,6 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:cursor_api_agents/src/agent_repository.dart';
 import 'package:cursor_api_agents/src/errors/agent_failure.dart';
 import 'package:cursor_api_agents/src/models/agent_model.dart';
+import 'package:cursor_api_agents/src/models/artifact_download_result.dart';
 import 'package:cursor_api_agents/src/models/artifact_model.dart';
 import 'package:cursor_api_agents/src/models/create_agent_request.dart';
 import 'package:cursor_api_agents/src/models/create_run_request.dart';
@@ -18,11 +19,20 @@ class AgentRepositoryImpl implements AgentRepository {
   final CursorHttpClient _client;
 
   @override
-  Future<Either<AgentFailure, AgentListPage>> listAgents({String? cursor}) {
+  Future<Either<AgentFailure, AgentListPage>> listAgents({
+    String? cursor,
+    String? prUrl,
+    bool? includeArchived,
+  }) {
     return _guard(() async {
+      final query = <String, dynamic>{
+        if (cursor != null) 'cursor': cursor,
+        if (prUrl != null) 'prUrl': prUrl,
+        if (includeArchived != null) 'includeArchived': includeArchived,
+      };
       final data = await _client.get<Map<String, dynamic>>(
         '/agents',
-        queryParameters: cursor != null ? {'cursor': cursor} : null,
+        queryParameters: query.isEmpty ? null : query,
       );
       return AgentListPage.fromJson(data);
     });
@@ -134,6 +144,20 @@ class AgentRepositoryImpl implements AgentRepository {
         '/agents/$agentId/artifacts',
       );
       return ArtifactListPage.fromJson(data);
+    });
+  }
+
+  @override
+  Future<Either<AgentFailure, ArtifactDownloadResult>> downloadArtifact(
+    String agentId,
+    String path,
+  ) {
+    return _guard(() async {
+      final data = await _client.get<Map<String, dynamic>>(
+        '/agents/$agentId/artifacts/download',
+        queryParameters: {'path': path},
+      );
+      return ArtifactDownloadResult.fromJson(data);
     });
   }
 

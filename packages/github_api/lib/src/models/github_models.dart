@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class GithubRepoModel {
   const GithubRepoModel({
     required this.fullName,
@@ -71,6 +73,61 @@ class GithubPullFileModel {
   final String filename;
   final String? patch;
   final String? status;
+}
+
+class GithubBranchModel {
+  const GithubBranchModel({required this.name, this.sha});
+
+  factory GithubBranchModel.fromJson(Map<String, dynamic> json) {
+    final commit = json['commit'] as Map<String, dynamic>?;
+    return GithubBranchModel(
+      name: json['name'] as String? ?? '',
+      sha: commit?['sha'] as String?,
+    );
+  }
+
+  final String name;
+  final String? sha;
+}
+
+class GithubFileContent {
+  const GithubFileContent({
+    required this.path,
+    required this.content,
+    this.encoding,
+  });
+
+  factory GithubFileContent.fromJson(Map<String, dynamic> json) {
+    return GithubFileContent(
+      path: json['path'] as String? ?? '',
+      content: json['content'] as String? ?? '',
+      encoding: json['encoding'] as String?,
+    );
+  }
+
+  String decodeUtf8() {
+    if (encoding == 'base64') {
+      final normalized = content.replaceAll('\n', '');
+      return utf8.decode(base64.decode(normalized));
+    }
+    return content;
+  }
+
+  final String path;
+  final String content;
+  final String? encoding;
+}
+
+class GithubCheckStatus {
+  const GithubCheckStatus({
+    required this.state,
+    this.totalCount,
+    this.failingContexts,
+  });
+
+  final String state;
+  final int? totalCount;
+  final List<String>? failingContexts;
 }
 
 class GithubCommitModel {

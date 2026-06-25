@@ -1,0 +1,17 @@
+{
+  "id": "run-33670876-265f-4f39-9fb7-67253c272300",
+  "agentId": "bc-8894ba09-4ad1-4e12-b8ea-58b4b3f24274",
+  "status": "FINISHED",
+  "createdAt": "2026-06-22T23:59:19.833Z",
+  "updatedAt": "2026-06-22T23:59:43.673Z",
+  "durationMs": 3740,
+  "result": "SPRINT4_VALIDATION_OK",
+  "git": {
+    "branches": [
+      {
+        "repoUrl": "github.com/bmassij/spaansetuin-enzo-next",
+        "branch": "cursor/sprint-4-validation-response-4a60"
+      }
+    ]
+  }
+}
