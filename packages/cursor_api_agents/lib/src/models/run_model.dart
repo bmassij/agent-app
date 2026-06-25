@@ -63,9 +63,8 @@ class CreateRunResult {
           run?['id'] as String? ??
           json['id'] as String? ??
           '',
-      status: json['status'] as String? ??
-          run?['status'] as String? ??
-          'creating',
+      status:
+          json['status'] as String? ?? run?['status'] as String? ?? 'creating',
     );
   }
 

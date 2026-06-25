@@ -37,13 +37,13 @@ class _SetupScreenState extends State<SetupScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Cursor Commander',
+                  'Aivance Dev Console',
                   style: Theme.of(context).textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Plak je Cursor API key of zet CURSOR_API_KEY in '
+                  'Plak je toegangscode of zet CURSOR_API_KEY in '
                   'cursor-mobile-commander/.env',
                   textAlign: TextAlign.center,
                 ),
@@ -51,7 +51,8 @@ class _SetupScreenState extends State<SetupScreen> {
                 if (widget.error != null) ...[
                   Text(
                     widget.error!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -59,7 +60,7 @@ class _SetupScreenState extends State<SetupScreen> {
                   controller: _controller,
                   obscureText: _obscure,
                   decoration: InputDecoration(
-                    labelText: 'API key',
+                    labelText: 'Toegangscode',
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(

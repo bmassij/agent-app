@@ -27,7 +27,8 @@ class TemplatePickerSheet extends StatelessWidget {
         for (final item in BuiltInTemplates.items)
           ListTile(
             title: Text(item.$1),
-            subtitle: Text(item.$2, maxLines: 2, overflow: TextOverflow.ellipsis),
+            subtitle:
+                Text(item.$2, maxLines: 2, overflow: TextOverflow.ellipsis),
             onTap: () {
               Navigator.of(context).pop();
               onSelected(item.$2);

@@ -9,8 +9,8 @@ void main() {
         home: SetupScreen(onKeySaved: (_) {}),
       ),
     );
-    expect(find.text('Cursor Commander'), findsOneWidget);
-    expect(find.text('API key'), findsOneWidget);
+    expect(find.text('Aivance Dev Console'), findsOneWidget);
+    expect(find.text('Toegangscode'), findsOneWidget);
     expect(find.text('Verbinden'), findsOneWidget);
   });
 }

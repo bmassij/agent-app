@@ -98,8 +98,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _syncAssistantBubble() {
     if (_messages.isNotEmpty && _messages.last.isAssistant) {
-      _messages[_messages.length - 1] =
-          _ChatLine.assistant(_assistantBuffer);
+      _messages[_messages.length - 1] = _ChatLine.assistant(_assistantBuffer);
     } else {
       _messages.add(_ChatLine.assistant(_assistantBuffer));
     }
@@ -157,8 +156,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Column(
         children: [
-          if (_runActive)
-            const LinearProgressIndicator(minHeight: 2),
+          if (_runActive) const LinearProgressIndicator(minHeight: 2),
           Expanded(
             child: ListView.builder(
               controller: _scroll,
@@ -236,7 +234,10 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class _ChatLine {
-  _ChatLine._(this.text, {required this.isUser, required this.isAssistant, required this.isSystem});
+  _ChatLine._(this.text,
+      {required this.isUser,
+      required this.isAssistant,
+      required this.isSystem});
 
   factory _ChatLine.user(String text) =>
       _ChatLine._(text, isUser: true, isAssistant: false, isSystem: false);

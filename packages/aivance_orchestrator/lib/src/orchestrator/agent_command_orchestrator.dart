@@ -1,9 +1,9 @@
-import 'package:commander_orchestrator/src/builder/context_builder.dart';
-import 'package:commander_orchestrator/src/models/repo_context_bundle.dart';
-import 'package:commander_orchestrator/src/builder/prompt_builder.dart';
-import 'package:commander_orchestrator/src/conversation/conversation_manager.dart';
-import 'package:commander_orchestrator/src/models/command_models.dart';
-import 'package:commander_orchestrator/src/scanner/repository_scanner.dart';
+import 'package:aivance_orchestrator/src/builder/context_builder.dart';
+import 'package:aivance_orchestrator/src/models/repo_context_bundle.dart';
+import 'package:aivance_orchestrator/src/builder/prompt_builder.dart';
+import 'package:aivance_orchestrator/src/conversation/conversation_manager.dart';
+import 'package:aivance_orchestrator/src/models/command_models.dart';
+import 'package:aivance_orchestrator/src/scanner/repository_scanner.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:github_api/github_api.dart';
@@ -20,7 +20,8 @@ class AgentCommandOrchestrator {
         _contextBuilder = contextBuilder ??
             ContextBuilder(scanner: RepositoryScanner(github: github)),
         _promptBuilder = promptBuilder ?? const PromptBuilder(),
-        _conversation = conversationManager ?? ConversationManager(agents: agents);
+        _conversation =
+            conversationManager ?? ConversationManager(agents: agents);
 
   final AgentRepository _agents;
   final ContextBuilder _contextBuilder;

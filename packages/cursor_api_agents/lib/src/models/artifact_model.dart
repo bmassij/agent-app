@@ -22,8 +22,9 @@ class ArtifactListPage {
   const ArtifactListPage({required this.artifacts});
 
   factory ArtifactListPage.fromJson(Map<String, dynamic> json) {
-    final items =
-        json['artifacts'] as List<dynamic>? ?? json['data'] as List<dynamic>? ?? [];
+    final items = json['artifacts'] as List<dynamic>? ??
+        json['data'] as List<dynamic>? ??
+        [];
     return ArtifactListPage(
       artifacts: items
           .whereType<Map<String, dynamic>>()

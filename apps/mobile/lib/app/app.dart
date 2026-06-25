@@ -7,6 +7,8 @@ import 'package:cursor_mobile_commander/app/theme.dart';
 import 'package:cursor_mobile_commander/features/auth/data/github_auth_service.dart';
 import 'package:cursor_mobile_commander/features/auth/presentation/auth_provider.dart';
 import 'package:cursor_mobile_commander/features/auth/presentation/biometric_screen.dart';
+import 'package:cursor_mobile_commander/core/network/connectivity_service.dart';
+import 'package:cursor_mobile_commander/features/chat/presentation/offline_queue_provider.dart';
 import 'package:cursor_mobile_commander/features/onboarding/presentation/onboarding_provider.dart';
 
 /// Root [MaterialApp] with biometric gate and deep-link handling.
@@ -24,6 +26,15 @@ class _CommanderAppState extends ConsumerState<CommanderApp> {
   void initState() {
     super.initState();
     _listenDeepLinks();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.listenManual(isOnlineProvider, (previous, next) {
+        final wasOffline = previous?.valueOrNull == false;
+        final isOnline = next.valueOrNull ?? false;
+        if (wasOffline && isOnline) {
+          ref.read(offlineQueueProcessorProvider).processPending();
+        }
+      });
+    });
   }
 
   Future<void> _listenDeepLinks() async {

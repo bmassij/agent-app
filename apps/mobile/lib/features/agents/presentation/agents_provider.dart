@@ -1,4 +1,4 @@
-import 'package:commander_orchestrator/commander_orchestrator.dart';
+import 'package:aivance_orchestrator/aivance_orchestrator.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart' as api;
 import 'package:cursor_api_core/cursor_api_core.dart';
 import 'package:cursor_api_stream/cursor_api_stream.dart';
@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:github_api/github_api.dart';
 
 import 'package:cursor_mobile_commander/core/database/database_provider.dart';
-import 'package:cursor_mobile_commander/core/storage/secure_storage_keys.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_service.dart';
 import 'package:cursor_mobile_commander/features/agents/data/agent_local_source.dart';
 import 'package:cursor_mobile_commander/features/agents/data/agent_repository_impl.dart';
@@ -18,10 +17,11 @@ import 'package:cursor_mobile_commander/features/chat/domain/chat_repository.dar
 
 final cursorApiKeyProvider = FutureProvider<String?>((ref) async {
   final storage = ref.watch(secureStorageServiceProvider);
-  return storage.readKey(SecureStorageKeys.cursorApiKey);
+  return storage.readCursorToken();
 });
 
-final apiAgentRepositoryProvider = FutureProvider<api.AgentRepository>((ref) async {
+final apiAgentRepositoryProvider =
+    FutureProvider<api.AgentRepository>((ref) async {
   final key = await ref.watch(cursorApiKeyProvider.future);
   if (key == null || key.isEmpty) {
     throw StateError('Cursor API key not configured');
@@ -36,7 +36,7 @@ final agentLocalSourceProvider = FutureProvider<AgentLocalSource>((ref) async {
 
 final githubAccessTokenProvider = FutureProvider<String?>((ref) async {
   final storage = ref.watch(secureStorageServiceProvider);
-  return storage.readKey(SecureStorageKeys.githubAccessToken);
+  return storage.readGithubToken();
 });
 
 final githubRepositoryProvider = FutureProvider<GithubRepository?>((ref) async {

@@ -89,7 +89,7 @@ packages:
     source: path
     version: "0.1.0"
   cursor_api_core:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       path: "../cursor_api_core"
       relative: true

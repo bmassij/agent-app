@@ -1,5 +1,5 @@
-import 'package:commander_orchestrator/commander_orchestrator.dart';
-import 'package:commander_orchestrator/src/models/repo_context_bundle.dart';
+import 'package:aivance_orchestrator/aivance_orchestrator.dart';
+import 'package:aivance_orchestrator/src/models/repo_context_bundle.dart';
 import 'package:test/test.dart';
 
 void main() {

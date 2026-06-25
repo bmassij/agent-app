@@ -1,4 +1,4 @@
-name: cursor_mobile_commander
+name: aivance
 
 packages:
   - apps/mobile
@@ -31,6 +31,12 @@ scripts:
       cd apps/mobile
       flutter build apk --debug
     description: Verify Android debug build
+
+  build-desktop:
+    run: |
+      cd apps/desktop
+      flutter build windows --debug
+    description: Verify Windows debug build
 
   clean:
     run: melos exec -- flutter clean

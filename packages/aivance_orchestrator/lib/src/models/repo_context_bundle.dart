@@ -39,7 +39,7 @@ class RepoContextBundle {
   String get fullName => '$owner/$repoName';
 
   String cacheKey({String? prUrl}) =>
-      '$repoUrl|${resolvedBranch}|${prUrl ?? this.prUrl ?? ''}';
+      '$repoUrl|$resolvedBranch|${prUrl ?? this.prUrl ?? ''}';
 }
 
 class CommitSummary {

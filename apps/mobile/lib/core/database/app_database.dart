@@ -65,6 +65,6 @@ class AppDatabase extends _$AppDatabase {
       UserSettingsCompanion.insert(updatedAt: DateTime.now().toUtc()),
     );
     return (await (select(userSettings)..where((t) => t.id.equals(id)))
-            .getSingle());
+        .getSingle());
   }
 }

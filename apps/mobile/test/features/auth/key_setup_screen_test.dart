@@ -12,7 +12,8 @@ import 'package:cursor_mobile_commander/features/auth/presentation/key_setup_scr
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
 void main() {
-  testWidgets('KeySetupScreen shows validate button and QR option', (tester) async {
+  testWidgets('KeySetupScreen shows validate button and QR option',
+      (tester) async {
     final mockRepo = _MockAuthRepository();
     when(() => mockRepo.validateSession()).thenAnswer((_) async => false);
 

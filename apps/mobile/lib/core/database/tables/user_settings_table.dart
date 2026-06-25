@@ -5,8 +5,7 @@ import 'package:drift/drift.dart';
 class UserSettings extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  TextColumn get cursorKeyRef =>
-      text().withDefault(const Constant('secure'))();
+  TextColumn get cursorKeyRef => text().withDefault(const Constant('secure'))();
 
   TextColumn get githubTokenRef =>
       text().withDefault(const Constant('secure'))();

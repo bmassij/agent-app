@@ -88,6 +88,7 @@ class ChatSsePersister {
         );
       case InteractionUpdateEvent(:final payload):
         final label = payload['message'] as String? ??
+            payload['type'] as String? ??
             payload['kind'] as String? ??
             jsonEncode(payload);
         await _upsertMessage(
@@ -126,6 +127,7 @@ class ChatSsePersister {
           errorMessage: message,
           completedAt: now,
         );
+      case HeartbeatEvent():
       case UnknownSseEvent():
         break;
     }

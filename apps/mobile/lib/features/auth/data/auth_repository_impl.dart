@@ -6,7 +6,6 @@ import 'package:local_auth/local_auth.dart';
 
 import 'package:cursor_mobile_commander/core/database/app_database.dart';
 import 'package:cursor_mobile_commander/core/logging/app_logger.dart';
-import 'package:cursor_mobile_commander/core/storage/secure_storage_keys.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_service.dart';
 import 'package:cursor_mobile_commander/features/auth/data/auth_remote_source.dart';
 import 'package:cursor_mobile_commander/features/auth/domain/auth_failure.dart';
@@ -33,13 +32,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<bool> hasCursorKey() async {
-    final key = await _secureStorage.readKey(SecureStorageKeys.cursorApiKey);
+    final key = await _secureStorage.readCursorToken();
     return key != null && key.isNotEmpty;
   }
 
   @override
   Future<bool> validateSession() async {
-    final key = await _secureStorage.readKey(SecureStorageKeys.cursorApiKey);
+    final key = await _secureStorage.readCursorToken();
     if (key == null || key.isEmpty) {
       return false;
     }
@@ -96,10 +95,7 @@ class AuthRepositoryImpl implements AuthRepository {
       left,
       (me) async {
         try {
-          await _secureStorage.writeKey(
-            SecureStorageKeys.cursorApiKey,
-            key.trim(),
-          );
+          await _secureStorage.writeCursorToken(key.trim());
           return right(me);
         } catch (e) {
           return left(StorageFailure(e.toString()));
@@ -110,7 +106,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> clearCursorKey() async {
-    await _secureStorage.deleteKey(SecureStorageKeys.cursorApiKey);
+    await _secureStorage.deleteCursorToken();
   }
 
   @override
@@ -165,8 +161,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<bool> hasGithubToken() async {
-    final token =
-        await _secureStorage.readKey(SecureStorageKeys.githubAccessToken);
+    final token = await _secureStorage.readGithubToken();
     return token != null && token.isNotEmpty;
   }
 }

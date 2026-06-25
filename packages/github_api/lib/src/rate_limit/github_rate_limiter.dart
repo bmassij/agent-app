@@ -25,7 +25,8 @@ class GithubRateLimiter {
           _header(headers, 'x-ratelimit-remaining') ?? '',
         ) ??
         0;
-    final limit = int.tryParse(_header(headers, 'x-ratelimit-limit') ?? '') ?? 0;
+    final limit =
+        int.tryParse(_header(headers, 'x-ratelimit-limit') ?? '') ?? 0;
     final resetSeconds =
         int.tryParse(_header(headers, 'x-ratelimit-reset') ?? '');
     final resetAt = resetSeconds != null

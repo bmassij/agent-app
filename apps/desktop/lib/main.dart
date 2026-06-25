@@ -33,7 +33,7 @@ class _CommanderDesktopAppState extends State<CommanderDesktopApp> {
     if (key == null) {
       setState(() {
         _loading = false;
-        _error = 'Geen API key. Zet CURSOR_API_KEY in .env of hieronder.';
+        _error = 'Geen verbinding. Zet CURSOR_API_KEY in .env of hieronder.';
       });
       return;
     }
@@ -51,7 +51,7 @@ class _CommanderDesktopAppState extends State<CommanderDesktopApp> {
     } catch (e) {
       setState(() {
         _loading = false;
-        _error = 'API key ongeldig: $e';
+        _error = 'Verbinding ongeldig: $e';
       });
     }
   }
@@ -64,26 +64,25 @@ class _CommanderDesktopAppState extends State<CommanderDesktopApp> {
     CursorSession(apiKey: key, githubToken: EnvConfig.loadGithubToken())
         .validate()
         .then((_) {
-          setState(() {
-            _session = CursorSession(
-              apiKey: key,
-              githubToken: EnvConfig.loadGithubToken(),
-            );
-            _loading = false;
-          });
-        })
-        .catchError((Object e) {
-          setState(() {
-            _loading = false;
-            _error = 'Ongeldige key: $e';
-          });
-        });
+      setState(() {
+        _session = CursorSession(
+          apiKey: key,
+          githubToken: EnvConfig.loadGithubToken(),
+        );
+        _loading = false;
+      });
+    }).catchError((Object e) {
+      setState(() {
+        _loading = false;
+        _error = 'Ongeldige verbinding: $e';
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cursor Commander',
+      title: 'Aivance Dev Console',
       theme: DesktopTheme.dark,
       debugShowCheckedModeBanner: false,
       home: _loading

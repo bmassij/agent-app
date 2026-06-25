@@ -44,8 +44,7 @@ class RunLogsScreen extends ConsumerWidget {
                           content: message.content,
                           isThinking: message.isThinking,
                         ),
-                    for (final tool in logs.tools)
-                      ToolCallChip(toolCall: tool),
+                    for (final tool in logs.tools) ToolCallChip(toolCall: tool),
                   ],
                 ),
               ),

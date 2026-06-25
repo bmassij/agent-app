@@ -19,8 +19,9 @@ class ModelListPage {
   const ModelListPage({required this.models});
 
   factory ModelListPage.fromJson(Map<String, dynamic> json) {
-    final items =
-        json['models'] as List<dynamic>? ?? json['data'] as List<dynamic>? ?? [];
+    final items = json['models'] as List<dynamic>? ??
+        json['data'] as List<dynamic>? ??
+        [];
     return ModelListPage(
       models: items
           .whereType<Map<String, dynamic>>()

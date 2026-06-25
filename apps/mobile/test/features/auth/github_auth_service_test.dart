@@ -22,6 +22,40 @@ class _MemoryStorage implements SecureStorageService {
 
   @override
   Future<void> writeKey(String key, String value) async => _values[key] = value;
+
+  @override
+  Future<void> deleteCursorToken() async {
+    _values.remove(SecureStorageKeys.providerCursorToken);
+    _values.remove(SecureStorageKeys.cursorApiKey);
+  }
+
+  @override
+  Future<void> deleteGithubToken() async {
+    _values.remove(SecureStorageKeys.integrationGithubToken);
+    _values.remove(SecureStorageKeys.githubAccessToken);
+  }
+
+  @override
+  Future<String?> readCursorToken() async =>
+      _values[SecureStorageKeys.providerCursorToken] ??
+      _values[SecureStorageKeys.cursorApiKey];
+
+  @override
+  Future<String?> readGithubToken() async =>
+      _values[SecureStorageKeys.integrationGithubToken] ??
+      _values[SecureStorageKeys.githubAccessToken];
+
+  @override
+  Future<void> writeCursorToken(String value) async {
+    _values[SecureStorageKeys.providerCursorToken] = value;
+    _values[SecureStorageKeys.cursorApiKey] = value;
+  }
+
+  @override
+  Future<void> writeGithubToken(String value) async {
+    _values[SecureStorageKeys.integrationGithubToken] = value;
+    _values[SecureStorageKeys.githubAccessToken] = value;
+  }
 }
 
 class _MockDio extends Mock implements Dio {}

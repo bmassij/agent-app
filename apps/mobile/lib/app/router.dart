@@ -201,8 +201,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                       GoRoute(
                         path: 'edit/:id',
                         builder: (context, state) => PlaceholderScreen(
-                          title:
-                              'Edit Template ${state.pathParameters['id']}',
+                          title: 'Edit Template ${state.pathParameters['id']}',
                         ),
                       ),
                     ],

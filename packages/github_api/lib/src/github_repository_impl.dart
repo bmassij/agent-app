@@ -65,8 +65,7 @@ class GithubRepositoryImpl implements GithubRepository {
     int pullNumber,
   ) {
     return _guard(() async {
-      final data =
-          await _client.get('/repos/$owner/$repo/pulls/$pullNumber');
+      final data = await _client.get('/repos/$owner/$repo/pulls/$pullNumber');
       return GithubPullRequestModel.fromJson(data);
     });
   }
@@ -186,7 +185,8 @@ class GithubRepositoryImpl implements GithubRepository {
     });
   }
 
-  Future<Either<GithubApiError, T>> _guard<T>(Future<T> Function() action) async {
+  Future<Either<GithubApiError, T>> _guard<T>(
+      Future<T> Function() action) async {
     try {
       return right(await action());
     } on GithubApiError catch (e) {

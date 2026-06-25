@@ -54,7 +54,8 @@ class GithubHttpClient {
     String path, {
     Map<String, dynamic>? queryParameters,
   }) async {
-    return _request(() => _dio.get<dynamic>(path, queryParameters: queryParameters));
+    return _request(
+        () => _dio.get<dynamic>(path, queryParameters: queryParameters));
   }
 
   Future<Map<String, dynamic>> post(
@@ -106,10 +107,12 @@ class GithubHttpClient {
     }
     if (status == 429) {
       final resetHeader = e.response?.headers.value('x-ratelimit-reset');
-      final resetSeconds = resetHeader != null ? int.tryParse(resetHeader) : null;
+      final resetSeconds =
+          resetHeader != null ? int.tryParse(resetHeader) : null;
       return GithubRateLimitedError(
         resetAt: resetSeconds != null
-            ? DateTime.fromMillisecondsSinceEpoch(resetSeconds * 1000, isUtc: true)
+            ? DateTime.fromMillisecondsSinceEpoch(resetSeconds * 1000,
+                isUtc: true)
             : null,
       );
     }

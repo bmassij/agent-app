@@ -132,7 +132,8 @@ class CursorHttpClient {
       return CursorContextTooLargeError(message ?? 'Context too large');
     }
     if (status == 429) {
-      return CursorRateLimitError(resetAt: _parseRateLimitReset(e.response?.headers));
+      return CursorRateLimitError(
+          resetAt: _parseRateLimitReset(e.response?.headers));
     }
     if (status != null && status >= 500) {
       return CursorServerError(status, message);

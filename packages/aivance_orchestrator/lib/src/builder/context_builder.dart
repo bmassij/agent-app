@@ -1,8 +1,8 @@
-import 'package:commander_orchestrator/src/cache/context_cache.dart';
-import 'package:commander_orchestrator/src/intent/prompt_intent.dart';
-import 'package:commander_orchestrator/src/models/command_models.dart';
-import 'package:commander_orchestrator/src/models/repo_context_bundle.dart';
-import 'package:commander_orchestrator/src/scanner/repository_scanner.dart';
+import 'package:aivance_orchestrator/src/cache/context_cache.dart';
+import 'package:aivance_orchestrator/src/intent/prompt_intent.dart';
+import 'package:aivance_orchestrator/src/models/command_models.dart';
+import 'package:aivance_orchestrator/src/models/repo_context_bundle.dart';
+import 'package:aivance_orchestrator/src/scanner/repository_scanner.dart';
 
 /// Assembles [RepoContextBundle] with caching and intent-aware PR selection.
 class ContextBuilder {
@@ -22,7 +22,8 @@ class ContextBuilder {
     UserRepoPreferences prefs = const UserRepoPreferences(),
   }) async {
     final intent = PromptIntent.analyze(input.userPrompt);
-    final preliminaryKey = '${input.repoUrl}|${input.branch ?? prefs.lastBranch ?? ''}|${input.prUrl ?? ''}';
+    final preliminaryKey =
+        '${input.repoUrl}|${input.branch ?? prefs.lastBranch ?? ''}|${input.prUrl ?? ''}';
     final cached = _cache.get(preliminaryKey);
     if (cached != null && input.prUrl == null && input.prNumber == null) {
       return cached;
@@ -37,7 +38,8 @@ class ContextBuilder {
     );
 
     if (intent.wantsFix || intent.wantsTests) {
-      bundle = _preferPrWithFailingCi(bundle, await _rescanWithPrIfNeeded(input, bundle, prefs));
+      bundle = _preferPrWithFailingCi(
+          bundle, await _rescanWithPrIfNeeded(input, bundle, prefs));
     }
 
     _cache.put(bundle.cacheKey(), bundle);

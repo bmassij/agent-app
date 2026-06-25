@@ -1,5 +1,7 @@
-# melos_managed_dependency_overrides: cursor_api_agents,cursor_api_core,cursor_api_stream,github_api
+# melos_managed_dependency_overrides: cursor_api_agents,cursor_api_core,cursor_api_stream,github_api,aivance_orchestrator
 dependency_overrides:
+  aivance_orchestrator:
+    path: ..\\..\\packages\\aivance_orchestrator
   cursor_api_agents:
     path: ..\\..\\packages\\cursor_api_agents
   cursor_api_core:

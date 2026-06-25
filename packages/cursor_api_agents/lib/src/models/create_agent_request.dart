@@ -121,9 +121,7 @@ class CreateAgentResult {
     final run = json['run'] as Map<String, dynamic>?;
 
     return CreateAgentResult(
-      agentId: json['agentId'] as String? ??
-          agent?['id'] as String? ??
-          '',
+      agentId: json['agentId'] as String? ?? agent?['id'] as String? ?? '',
       runId: json['runId'] as String? ?? run?['id'] as String? ?? '',
       status: json['status'] as String? ??
           run?['status'] as String? ??

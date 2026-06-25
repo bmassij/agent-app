@@ -22,7 +22,8 @@ class ChatRepositoryImpl implements ChatRepository {
         _stream = streamService,
         _api = apiRepository,
         _local = localSource,
-        _persister = ChatSsePersister(database: database, agentLocal: agentLocal);
+        _persister =
+            ChatSsePersister(database: database, agentLocal: agentLocal);
 
   final AppDatabase _db;
   final RunStreamService _stream;
@@ -63,17 +64,17 @@ class ChatRepositoryImpl implements ChatRepository {
   }) {
     return _stream
         .connectRun(
-          agentId: agentId,
-          runId: runId,
-          lastEventId: lastEventId,
-          onStreamExpired: () {},
-        )
+      agentId: agentId,
+      runId: runId,
+      lastEventId: lastEventId,
+      onStreamExpired: () {},
+    )
         .map((event) {
-          if (!_liveSseLogged && _stream.logger.loggedLines.isNotEmpty) {
-            _liveSseLogged = true;
-          }
-          return event;
-        });
+      if (!_liveSseLogged && _stream.logger.loggedLines.isNotEmpty) {
+        _liveSseLogged = true;
+      }
+      return event;
+    });
   }
 
   @override

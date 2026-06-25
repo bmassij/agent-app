@@ -23,6 +23,40 @@ class _InMemorySecureStorage implements SecureStorageService {
 
   @override
   Future<void> writeKey(String key, String value) async => _values[key] = value;
+
+  @override
+  Future<void> deleteCursorToken() async {
+    _values.remove(SecureStorageKeys.providerCursorToken);
+    _values.remove(SecureStorageKeys.cursorApiKey);
+  }
+
+  @override
+  Future<void> deleteGithubToken() async {
+    _values.remove(SecureStorageKeys.integrationGithubToken);
+    _values.remove(SecureStorageKeys.githubAccessToken);
+  }
+
+  @override
+  Future<String?> readCursorToken() async =>
+      _values[SecureStorageKeys.providerCursorToken] ??
+      _values[SecureStorageKeys.cursorApiKey];
+
+  @override
+  Future<String?> readGithubToken() async =>
+      _values[SecureStorageKeys.integrationGithubToken] ??
+      _values[SecureStorageKeys.githubAccessToken];
+
+  @override
+  Future<void> writeCursorToken(String value) async {
+    _values[SecureStorageKeys.providerCursorToken] = value;
+    _values[SecureStorageKeys.cursorApiKey] = value;
+  }
+
+  @override
+  Future<void> writeGithubToken(String value) async {
+    _values[SecureStorageKeys.integrationGithubToken] = value;
+    _values[SecureStorageKeys.githubAccessToken] = value;
+  }
 }
 
 void main() {
@@ -122,8 +156,9 @@ void main() {
       (_) => fail('expected right'),
       (_) {},
     );
+    expect(await storage.readCursorToken(), 'cursor_save');
     expect(
-      await storage.readKey(SecureStorageKeys.cursorApiKey),
+      await storage.readKey(SecureStorageKeys.providerCursorToken),
       'cursor_save',
     );
   });
@@ -142,14 +177,14 @@ void main() {
   });
 
   test('validateSession returns true when stored key is valid', () async {
-    await storage.writeKey(SecureStorageKeys.cursorApiKey, 'cursor_valid');
+    await storage.writeCursorToken('cursor_valid');
     when(() => remote.fetchMe('cursor_valid')).thenAnswer((_) async => me);
 
     expect(await repo().validateSession(), isTrue);
   });
 
   test('validateSession clears key and returns false on 401', () async {
-    await storage.writeKey(SecureStorageKeys.cursorApiKey, 'cursor_bad');
+    await storage.writeCursorToken('cursor_bad');
     when(() => remote.fetchMe('cursor_bad')).thenThrow(
       DioException(
         requestOptions: RequestOptions(path: '/me'),
@@ -161,11 +196,11 @@ void main() {
     );
 
     expect(await repo().validateSession(), isFalse);
-    expect(await storage.readKey(SecureStorageKeys.cursorApiKey), isNull);
+    expect(await storage.readCursorToken(), isNull);
   });
 
   test('validateSession allows offline when network fails', () async {
-    await storage.writeKey(SecureStorageKeys.cursorApiKey, 'cursor_key');
+    await storage.writeCursorToken('cursor_key');
     when(() => remote.fetchMe('cursor_key')).thenThrow(
       DioException(
         requestOptions: RequestOptions(path: '/me'),
@@ -175,6 +210,6 @@ void main() {
     );
 
     expect(await repo().validateSession(), isTrue);
-    expect(await storage.readKey(SecureStorageKeys.cursorApiKey), 'cursor_key');
+    expect(await storage.readCursorToken(), 'cursor_key');
   });
 }

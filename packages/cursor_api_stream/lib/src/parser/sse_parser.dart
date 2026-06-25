@@ -101,6 +101,7 @@ class SseParser {
       'status' => StatusEvent.fromData(json, id: id),
       'interaction_update' => InteractionUpdateEvent.fromData(json, id: id),
       'result' => ResultEvent.fromData(json, id: id),
+      'heartbeat' => HeartbeatEvent(id: id),
       'done' => DoneEvent(id: id),
       'error' => ErrorEvent.fromData(json, id: id),
       _ => UnknownSseEvent(rawEventType: eventType, rawData: rawData, id: id),

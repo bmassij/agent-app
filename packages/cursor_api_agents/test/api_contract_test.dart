@@ -23,7 +23,8 @@ void main() {
 
       final json = request.toJson();
 
-      expect(json['prompt'], {'text': 'Reply with exactly: SPRINT4_VALIDATION_OK.'});
+      expect(json['prompt'],
+          {'text': 'Reply with exactly: SPRINT4_VALIDATION_OK.'});
       expect(json['repos'], [
         {
           'url': 'https://github.com/bmassij/spaansetuin-enzo-next',
@@ -133,7 +134,8 @@ void main() {
       );
 
       expect(page.agents, hasLength(1));
-      expect(page.agents.single.agentId, 'bc-8894ba09-4ad1-4e12-b8ea-58b4b3f24274');
+      expect(page.agents.single.agentId,
+          'bc-8894ba09-4ad1-4e12-b8ea-58b4b3f24274');
       expect(page.agents.single.name, 'Sprint 4 validation response');
       expect(
         page.agents.single.latestRunId,
@@ -152,8 +154,8 @@ void main() {
     });
 
     test('RunModel parses live GET run response', () {
-      final raw = File('test/fixtures/live_get_run_response.json')
-          .readAsStringSync();
+      final raw =
+          File('test/fixtures/live_get_run_response.json').readAsStringSync();
       final run = RunModel.fromJson(jsonDecode(raw) as Map<String, dynamic>);
 
       expect(run.runId, 'run-33670876-265f-4f39-9fb7-67253c272300');

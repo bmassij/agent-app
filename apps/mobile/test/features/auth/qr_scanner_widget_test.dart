@@ -26,6 +26,13 @@ void main() {
       expect(parsed, key);
     });
 
+    test('accepts raw crsr_ key string', () {
+      const key =
+          'crsr_e1c7a601fbe948e0dd1b1bd0fbf20929bdcd1ecfa11cca80f573618854bebc37';
+      final parsed = QrScannerWidget.parseApiKeyFromPayload(key);
+      expect(parsed, key);
+    });
+
     test('returns null for invalid payload', () {
       expect(QrScannerWidget.parseApiKeyFromPayload('not-a-key'), isNull);
       expect(QrScannerWidget.parseApiKeyFromPayload('cursor_short'), isNull);

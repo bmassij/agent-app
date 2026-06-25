@@ -1,5 +1,5 @@
-name: commander_orchestrator
-description: Context orchestration for Cursor Cloud Agents — briefing, caching, dispatch.
+name: aivance_orchestrator
+description: Context orchestration for Aivance Core — briefing, caching, dispatch.
 version: 0.1.0
 publish_to: none
 

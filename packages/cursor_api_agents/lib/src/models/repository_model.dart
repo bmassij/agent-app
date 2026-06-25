@@ -29,8 +29,8 @@ class RepositoryModel {
       url: normalizeRepoUrl(url),
       owner: owner,
       name: name,
-      defaultBranch: json['defaultBranch'] as String? ??
-          json['default_branch'] as String?,
+      defaultBranch:
+          json['defaultBranch'] as String? ?? json['default_branch'] as String?,
     );
   }
 

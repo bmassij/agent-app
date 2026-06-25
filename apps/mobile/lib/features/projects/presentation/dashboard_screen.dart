@@ -27,8 +27,7 @@ class DashboardScreen extends ConsumerWidget {
         if (repos.isEmpty) {
           return _MessageCard(
             title: 'No repositories yet',
-            body:
-                'Connect GitHub in your workspace settings, '
+            body: 'Connect GitHub in your workspace settings, '
                 'or paste a repo URL when starting a command.',
             actionLabel: 'New command',
             onAction: () => context.go(Routes.homeWorkers),

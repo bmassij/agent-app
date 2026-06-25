@@ -7,7 +7,8 @@ import 'package:cursor_mobile_commander/features/projects/data/project_repositor
 import 'package:cursor_mobile_commander/features/projects/domain/project_failure.dart';
 import 'package:cursor_mobile_commander/features/projects/domain/project_repository.dart';
 
-final projectRepositoryProvider = FutureProvider<ProjectRepository>((ref) async {
+final projectRepositoryProvider =
+    FutureProvider<ProjectRepository>((ref) async {
   final db = await ref.watch(appDatabaseFutureProvider.future);
   return ProjectRepositoryImpl(database: db);
 });

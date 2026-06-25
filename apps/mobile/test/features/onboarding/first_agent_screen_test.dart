@@ -13,7 +13,8 @@ import 'package:cursor_mobile_commander/features/onboarding/presentation/first_a
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
 void main() {
-  testWidgets('FirstAgentScreen shows biometric finish options', (tester) async {
+  testWidgets('FirstAgentScreen shows biometric finish options',
+      (tester) async {
     final mockRepo = _MockAuthRepository();
     when(() => mockRepo.setBiometricEnabled(any())).thenAnswer(
       (_) async => right(unit),

@@ -4,14 +4,19 @@ import 'package:cursor_api_agents/cursor_api_agents.dart';
 import 'package:cursor_api_stream/cursor_api_stream.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:cursor_mobile_commander/core/config/feature_flags.dart';
+import 'package:cursor_mobile_commander/core/network/connectivity_service.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_keys.dart';
 import 'package:cursor_mobile_commander/core/storage/secure_storage_service.dart';
 import 'package:cursor_mobile_commander/features/agents/presentation/agents_provider.dart';
 import 'package:cursor_mobile_commander/features/chat/domain/chat_message_model.dart';
 import 'package:cursor_mobile_commander/features/chat/domain/tool_call_model.dart';
+import 'package:cursor_mobile_commander/features/chat/presentation/offline_queue_provider.dart';
+import 'package:cursor_mobile_commander/features/notifications/data/notification_service.dart';
 
 final chatMessagesProvider =
-    StreamProvider.family<List<ChatMessageModel>, String>((ref, agentId) async* {
+    StreamProvider.family<List<ChatMessageModel>, String>(
+        (ref, agentId) async* {
   final repo = await ref.watch(chatRepositoryProvider.future);
   yield* repo.watchMessagesForAgent(agentId);
 });
@@ -175,7 +180,21 @@ class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
       (_, next) {
         next.whenOrNull(
           data: (event) {
-            if (event is DoneEvent || event is ErrorEvent) {
+            if (event is DoneEvent) {
+              ref.read(chatStateProvider(agentId).notifier).setRunActive(
+                    runId: runId,
+                    active: false,
+                  );
+              if (FeatureFlags.notificationsEnabled) {
+                unawaited(
+                  ref.read(notificationServiceProvider).showTaskComplete(
+                        title: 'Task complete',
+                        body: 'Your worker finished the task.',
+                        id: runId.hashCode,
+                      ),
+                );
+              }
+            } else if (event is ErrorEvent) {
               ref.read(chatStateProvider(agentId).notifier).setRunActive(
                     runId: runId,
                     active: false,
@@ -183,7 +202,9 @@ class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
             }
           },
           error: (e, _) {
-            ref.read(chatStateProvider(agentId).notifier).setError(e.toString());
+            ref
+                .read(chatStateProvider(agentId).notifier)
+                .setError(e.toString());
           },
         );
       },
@@ -206,12 +227,41 @@ class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
 
     chatNotifier.setSending(true);
 
+    final online = await ref.read(connectivityServiceProvider).checkOnline();
+    if (!online && FeatureFlags.offlineQueueEnabled) {
+      final agent = await ref.read(agentProvider(agentId).future);
+      final storage = ref.read(secureStorageServiceProvider);
+      final lastRepo = await storage.readKey(SecureStorageKeys.lastUsedRepoUrl);
+      final repoUrl = agent != null && agent.projectId != 'default'
+          ? 'https://github.com/${agent.projectId}'
+          : (lastRepo ?? 'https://github.com/unknown/repo');
+
+      final queue = await ref.read(queuedPromptServiceProvider.future);
+      await queue.enqueue(
+        agentId: agentId,
+        repoUrl: repoUrl,
+        promptText: prompt,
+      );
+      chatNotifier.setSending(false);
+      chatNotifier.setError(
+        'Offline — task queued and will send when you are back online.',
+      );
+      return;
+    }
+
     final agentRepo = await ref.read(agentRepositoryProvider.future);
     final chatRepo = await ref.read(chatRepositoryProvider.future);
+    final agent = await ref.read(agentProvider(agentId).future);
+    final repoUrl = agent != null && agent.projectId != 'default'
+        ? 'https://github.com/${agent.projectId}'
+        : await ref.read(secureStorageServiceProvider).readKey(
+              SecureStorageKeys.lastUsedRepoUrl,
+            );
 
     final result = await agentRepo.createRun(
       agentId: agentId,
       prompt: prompt,
+      repoUrl: repoUrl,
     );
 
     await result.fold(
@@ -237,8 +287,9 @@ class AgentChatNotifier extends FamilyAsyncNotifier<void, String> {
     final repo = await ref.read(agentRepositoryProvider.future);
     final result = await repo.cancelRun(agentId: agentId, runId: runId);
     result.fold(
-      (failure) =>
-          ref.read(chatStateProvider(agentId).notifier).setError(_failureMessage(failure)),
+      (failure) => ref
+          .read(chatStateProvider(agentId).notifier)
+          .setError(_failureMessage(failure)),
       (_) {
         ref.read(chatStateProvider(agentId).notifier).setRunActive(
               runId: runId,

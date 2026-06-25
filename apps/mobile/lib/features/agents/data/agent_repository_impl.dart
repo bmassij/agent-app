@@ -1,8 +1,9 @@
-import 'package:commander_orchestrator/commander_orchestrator.dart';
+import 'package:aivance_orchestrator/aivance_orchestrator.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart' as api;
 import 'package:fpdart/fpdart.dart';
 
-import 'package:cursor_mobile_commander/features/agents/data/agent_local_source.dart';import 'package:cursor_mobile_commander/features/agents/domain/agent_failure.dart';
+import 'package:cursor_mobile_commander/features/agents/data/agent_local_source.dart';
+import 'package:cursor_mobile_commander/features/agents/domain/agent_failure.dart';
 import 'package:cursor_mobile_commander/features/agents/domain/agent_model.dart';
 import 'package:cursor_mobile_commander/features/agents/domain/agent_repository.dart';
 import 'package:cursor_mobile_commander/features/agents/domain/run_model.dart';
@@ -194,6 +195,7 @@ class AgentRepositoryImpl implements AgentRepository {
       },
     );
   }
+
   @override
   Future<Either<AgentFailure, api.CreateRunResult>> createRun({
     required String agentId,
@@ -202,10 +204,14 @@ class AgentRepositoryImpl implements AgentRepository {
     List<api.PromptImage>? images,
     String? repoUrl,
   }) async {
+    final localAgent = await _local.getAgent(agentId);
+    final resolvedRepo =
+        repoUrl ?? _repoUrlFromProjectId(localAgent?.projectId);
+
     if (_orchestrator != null) {
       final input = CommandInput(
         userPrompt: prompt,
-        repoUrl: repoUrl ?? 'https://github.com/unknown/repo',
+        repoUrl: resolvedRepo,
         mode: mode,
         images: images,
         existingAgentId: agentId,
@@ -251,6 +257,7 @@ class AgentRepositoryImpl implements AgentRepository {
     );
     return right(run);
   }
+
   @override
   Future<Either<AgentFailure, Unit>> cancelRun({
     required String agentId,
@@ -326,5 +333,15 @@ class AgentRepositoryImpl implements AgentRepository {
   @override
   Future<Either<AgentFailure, api.RepositoryListPage>> listRepositories() {
     return _api.listRepositories();
+  }
+
+  String _repoUrlFromProjectId(String? projectId) {
+    if (projectId == null || projectId.isEmpty || projectId == 'default') {
+      return 'https://github.com/unknown/repo';
+    }
+    if (projectId.startsWith('http')) {
+      return projectId;
+    }
+    return 'https://github.com/$projectId';
   }
 }

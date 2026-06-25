@@ -89,8 +89,8 @@ class GithubAuthService {
 
     final oauthError = uri.queryParameters['error'];
     if (oauthError != null && oauthError.isNotEmpty) {
-      final description = uri.queryParameters['error_description'] ??
-          oauthError;
+      final description =
+          uri.queryParameters['error_description'] ?? oauthError;
       await _clearOAuthPendingKeys();
       throw GithubOAuthFailure(description);
     }
@@ -150,10 +150,7 @@ class GithubAuthService {
             'Token exchange failed';
         throw GithubOAuthFailure(error);
       }
-      await _secureStorage.writeKey(
-        SecureStorageKeys.githubAccessToken,
-        token,
-      );
+      await _secureStorage.writeGithubToken(token);
       _logger.debug('GitHub OAuth token stored');
     } on DioException catch (e) {
       throw GithubOAuthFailure(e.message ?? 'Token exchange failed');

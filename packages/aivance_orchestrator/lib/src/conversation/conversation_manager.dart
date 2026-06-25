@@ -1,5 +1,5 @@
-import 'package:commander_orchestrator/src/models/command_models.dart';
-import 'package:commander_orchestrator/src/models/repo_context_bundle.dart';
+import 'package:aivance_orchestrator/src/models/command_models.dart';
+import 'package:aivance_orchestrator/src/models/repo_context_bundle.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart';
 
 /// Decides whether to reuse agents and tracks preferences.
@@ -47,10 +47,11 @@ class ConversationManager {
     if (forceNew || prUrl == null || _agents == null) {
       return null;
     }
-    final result = await _agents.listAgents(prUrl: prUrl, includeArchived: false);
+    final result =
+        await _agents.listAgents(prUrl: prUrl, includeArchived: false);
     return result.fold((_) => null, (page) {
       final active = page.agents.where((a) {
-        final status = a.status?.toUpperCase();
+        final status = a.status.toUpperCase();
         return status == 'ACTIVE' || status == 'RUNNING';
       });
       return active.isNotEmpty ? active.first.agentId : null;

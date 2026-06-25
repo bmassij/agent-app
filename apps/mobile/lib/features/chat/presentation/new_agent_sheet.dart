@@ -72,8 +72,10 @@ class _NewAgentSheetState extends ConsumerState<NewAgentSheet> {
       return;
     }
     if (repo == null || repo.isEmpty) {
-      setState(() => _error =
-          'Pick a repository or paste a GitHub URL (https://github.com/owner/repo).',);
+      setState(
+        () => _error =
+            'Pick a repository or paste a GitHub URL (https://github.com/owner/repo).',
+      );
       return;
     }
 
@@ -83,8 +85,8 @@ class _NewAgentSheetState extends ConsumerState<NewAgentSheet> {
     });
 
     final repoApi = await ref.read(agentRepositoryProvider.future);
-    final projectId = Uri.tryParse(repo)?.pathSegments.take(2).join('/') ??
-        'default';
+    final projectId =
+        Uri.tryParse(repo)?.pathSegments.take(2).join('/') ?? 'default';
 
     final result = await repoApi.createAgent(
       projectId: projectId,
@@ -122,7 +124,9 @@ class _NewAgentSheetState extends ConsumerState<NewAgentSheet> {
     final defaultRepo = ref.watch(defaultRepoUrlProvider);
 
     defaultRepo.whenData((preferred) {
-      if (!_manualRepoInitialized && preferred != null && preferred.isNotEmpty) {
+      if (!_manualRepoInitialized &&
+          preferred != null &&
+          preferred.isNotEmpty) {
         _manualRepoInitialized = true;
         _manualRepoController.text = preferred;
       }

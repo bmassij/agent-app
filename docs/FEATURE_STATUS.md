@@ -20,20 +20,25 @@ Living document tracking **implemented** vs **planned** features in Aivance Core
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Flutter/Dart monorepo (Melos) | ✅ | 5 packages + mobile + desktop apps |
+| Flutter/Dart monorepo (Melos) | ✅ | Melos workspace `aivance`; 5 packages + mobile + desktop |
 | Workspace connection (secure storage) | ✅ | QR + manual paste; `GET /v1/me` validation |
 | GitHub OAuth PKCE | ✅ | Deep link `cursormc://oauth` |
 | Biometric unlock | ✅ | Opt-in at onboarding |
 | Onboarding flow | ✅ | Rebranded M1 copy |
 | Worker list + sync | ✅ | UI: "Workers"; internal `agentId` preserved |
 | Task chat + SSE streaming | ✅ | UI: worker/task terminology |
-| Follow-up prompts | ✅ | Direct API path (orchestrator bypass — M2 fix) |
+| Follow-up prompts | ✅ | Orchestrator enrichment (M2 O1) |
 | Cancel run | ✅ | |
 | Pin projects | ✅ | |
-| Orchestrator on create | ✅ | `commander_orchestrator` |
+| Orchestrator on create | ✅ | `aivance_orchestrator` |
+| Offline prompt queue | ✅ | `queued_prompts` + `QueuedPromptService` |
+| Connectivity detection | ✅ | `connectivity_plus` via `ConnectivityService` |
+| CI/CD | ✅ | `.github/workflows/ci.yml` (M2) |
+| Background notifications | ✅ | v1: local notifications + WorkManager register |
+| Secure storage dual-key | ✅ | `provider_cursor_token` / `integration_github_token` |
+| Provider facades | ✅ | `@Deprecated` aliases in `aivance_providers.dart` |
+| Feature flags | ✅ | `feature_flags.dart` |
 | Settings + OTA updates | ✅ | Partial; cleartext dev OTA |
-| CI/CD | ❌ | M2 |
-| Background notifications | ❌ | Declared deps only; M2 |
 
 ---
 
@@ -61,20 +66,17 @@ Living document tracking **implemented** vs **planned** features in Aivance Core
 
 ---
 
-## Planned (M2+)
+## Planned (M3+)
 
 | Item | Phase |
 |------|-------|
-| Package rename `commander_orchestrator` → `aivance_orchestrator` | M2 |
-| Melos workspace rename → `aivance` | M2 |
-| Provider facades (`taskListProvider`, …) | M2 |
-| CI/CD pipeline | M2 |
-| Orchestrator on follow-up | M2 |
 | ExecutionProvider abstraction | M3 |
+| `aivance_capabilities` package | M3 |
+| App package rename `cursor_mobile_commander` | M4+ |
 | Project Registry | M4 |
 | Project DNA wizard | M5 |
 | Presence™ module | M6 |
 
 ---
 
-*Updated during M1 migration (2026-06-25).*
+*Updated during M2 migration (2026-06-25).*

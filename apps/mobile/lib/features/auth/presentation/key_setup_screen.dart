@@ -66,8 +66,9 @@ class _KeySetupScreenState extends ConsumerState<KeySetupScreen> {
   }
 
   Future<void> _submit() async {
-    final ok =
-        await ref.read(keySetupProvider.notifier).validateAndSave(_controller.text);
+    final ok = await ref
+        .read(keySetupProvider.notifier)
+        .validateAndSave(_controller.text);
     if (!mounted) {
       return;
     }
@@ -95,8 +96,7 @@ class _KeySetupScreenState extends ConsumerState<KeySetupScreen> {
       _controller.text = key;
     });
 
-    final ok =
-        await ref.read(keySetupProvider.notifier).validateAndSave(key);
+    final ok = await ref.read(keySetupProvider.notifier).validateAndSave(key);
     if (!mounted) {
       return;
     }

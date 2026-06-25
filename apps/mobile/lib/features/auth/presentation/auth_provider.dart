@@ -36,6 +36,12 @@ class AuthSessionNotifier extends AsyncNotifier<bool> {
     state = const AsyncLoading();
     state = AsyncData(await build());
   }
+
+  /// After a successful key save we already validated via GET /v1/me.
+  /// Set session true before navigation so GoRouter does not bounce to onboarding.
+  void markAuthenticated() {
+    state = const AsyncData(true);
+  }
 }
 
 /// Biometric unlock for the current app session.
@@ -74,7 +80,6 @@ class KeySetupNotifier extends AsyncNotifier<Option<AuthFailure>> {
       },
       (_) async {
         state = const AsyncData(None());
-        await ref.read(authSessionProvider.notifier).refresh();
         return true;
       },
     );

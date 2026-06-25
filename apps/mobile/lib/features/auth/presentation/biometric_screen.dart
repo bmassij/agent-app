@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:cursor_mobile_commander/features/auth/domain/auth_failure.dart';
 import 'package:cursor_mobile_commander/features/auth/presentation/auth_provider.dart';
+import 'package:cursor_mobile_commander/features/onboarding/presentation/onboarding_provider.dart';
 import 'package:cursor_mobile_commander/shared/constants/colors.dart';
 import 'package:cursor_mobile_commander/shared/constants/sizes.dart';
 import 'package:cursor_mobile_commander/shared/widgets/loading_spinner.dart';
@@ -23,6 +24,14 @@ class BiometricScreen extends ConsumerStatefulWidget {
 class _BiometricScreenState extends ConsumerState<BiometricScreen> {
   bool _loading = false;
   String? _error;
+
+  Future<void> _skipBiometrics() async {
+    final repo = await ref.read(authRepositoryProvider.future);
+    await repo.setBiometricEnabled(false);
+    ref.read(biometricUnlockedProvider.notifier).unlock();
+    ref.invalidate(biometricEnabledProvider);
+    widget.onUnlocked();
+  }
 
   Future<void> _authenticate() async {
     setState(() {
@@ -81,11 +90,17 @@ class _BiometricScreenState extends ConsumerState<BiometricScreen> {
                 ),
               const SizedBox(height: AppSizes.paddingLarge),
               if (_loading) const LoadingSpinner(),
-              if (!_loading)
+              if (!_loading) ...[
                 FilledButton(
                   onPressed: _authenticate,
                   child: const Text('Try again'),
                 ),
+                const SizedBox(height: AppSizes.paddingSmall),
+                TextButton(
+                  onPressed: _skipBiometrics,
+                  child: const Text('Continue without biometrics'),
+                ),
+              ],
             ],
           ),
         ),

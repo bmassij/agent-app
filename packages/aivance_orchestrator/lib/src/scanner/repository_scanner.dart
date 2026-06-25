@@ -1,4 +1,4 @@
-import 'package:commander_orchestrator/src/models/repo_context_bundle.dart';
+import 'package:aivance_orchestrator/src/models/repo_context_bundle.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart';
 import 'package:github_api/github_api.dart';
 
@@ -56,7 +56,9 @@ class RepositoryScanner {
       final repoResult = await gh.getRepository(parsed.owner, parsed.repo);
       repoResult.fold((_) {}, (repo) {
         defaultBranch = repo.defaultBranch;
-        if (branch == null && preferredBranch == null && defaultBranch != null) {
+        if (branch == null &&
+            preferredBranch == null &&
+            defaultBranch != null) {
           resolvedBranch = defaultBranch!;
         }
       });

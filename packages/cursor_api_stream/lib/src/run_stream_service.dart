@@ -40,27 +40,24 @@ class RunStreamService {
     required String runId,
   }) {
     final tracker = RunStreamTracker(agentId: agentId, runId: runId);
-    return rawStream
-        .transform(
-          StreamTransformer<String, String>.fromHandlers(
-            handleData: (chunk, sink) {
-              _logger.logChunk(chunk);
-              sink.add(chunk);
-            },
-          ),
-        )
-        .asyncExpand((chunk) async* {
-          for (final event in _parser.parseChunk(chunk)) {
-            yield event;
-          }
-        })
-        .map((event) {
-          tracker.record(event);
-          if (event is DoneEvent) {
-            _reconnection.markConnected();
-          }
-          return event;
-        });
+    return rawStream.transform(
+      StreamTransformer<String, String>.fromHandlers(
+        handleData: (chunk, sink) {
+          _logger.logChunk(chunk);
+          sink.add(chunk);
+        },
+      ),
+    ).asyncExpand((chunk) async* {
+      for (final event in _parser.parseChunk(chunk)) {
+        yield event;
+      }
+    }).map((event) {
+      tracker.record(event);
+      if (event is DoneEvent) {
+        _reconnection.markConnected();
+      }
+      return event;
+    });
   }
 
   /// Builds stream URL for documentation and future HttpClient wiring.
@@ -121,8 +118,7 @@ class RunStreamService {
       try {
         final response = await http.get<ResponseBody>(
           '/agents/$agentId/runs/$runId/stream',
-          queryParameters:
-              resumeId != null ? {'lastEventId': resumeId} : null,
+          queryParameters: resumeId != null ? {'lastEventId': resumeId} : null,
           options: Options(
             headers: streamHeaders(lastEventId: resumeId),
             responseType: ResponseType.stream,

@@ -1,4 +1,4 @@
-import 'package:commander_orchestrator/commander_orchestrator.dart';
+import 'package:aivance_orchestrator/aivance_orchestrator.dart';
 import 'package:cursor_api_agents/cursor_api_agents.dart';
 import 'package:cursor_commander_desktop/screens/chat_screen.dart';
 import 'package:cursor_commander_desktop/services/cursor_session.dart';
@@ -133,7 +133,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 12),
           if (_error != null) ...[
-            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(_error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error)),
             const SizedBox(height: 8),
           ],
           Expanded(
@@ -143,7 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
               expands: true,
               textAlignVertical: TextAlignVertical.top,
               decoration: const InputDecoration(
-                hintText: 'Bijv. "Fix deze bug" of "Vertel me over dit project"',
+                hintText:
+                    'Bijv. "Fix deze bug" of "Vertel me over dit project"',
                 border: OutlineInputBorder(),
               ),
             ),

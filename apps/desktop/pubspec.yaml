@@ -8,8 +8,8 @@ environment:
   flutter: '>=3.22.0'
 
 dependencies:
-  commander_orchestrator:
-    path: ../../packages/commander_orchestrator
+  aivance_orchestrator:
+    path: ../../packages/aivance_orchestrator
   cursor_api_agents:
     path: ../../packages/cursor_api_agents
   cursor_api_core:

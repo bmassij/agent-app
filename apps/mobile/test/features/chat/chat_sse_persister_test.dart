@@ -60,6 +60,19 @@ void main() {
     expect(run.status, 'finished');
   });
 
+  test('persists concatenated live-style assistant text fragments', () async {
+    for (final fragment in ['SPR', 'INT', '4', '_VALID', 'ATION', '_OK']) {
+      await persister.persist(
+        agentId: 'a1',
+        runId: 'r1',
+        event: AssistantDeltaEvent(delta: fragment),
+      );
+    }
+
+    final messages = await db.select(db.chatMessages).get();
+    expect(messages.single.content, 'SPRINT4_VALIDATION_OK');
+  });
+
   test('persists tool call event', () async {
     await persister.persist(
       agentId: 'a1',
