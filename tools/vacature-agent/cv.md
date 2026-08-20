@@ -143,9 +143,14 @@ Daarmee dichten we een onbekende stack (PHP, n8n, extra API) in dagen in *jullie
 ## Werkervaring
 
 ### Zelfstandig software- & AI-ontwikkelaar
-**2019 – heden · Roermond**
+**2021 – heden · Roermond**
 
 Eigen producten en opdrachtwerk: AI-integratie, webapps, contentplatforms, automatisering, vision én image generation (ComfyUI). Van ontwerp tot live deploy (Vercel/GitHub). Werkt documentatiegedreven: architectuur, guardrails en tesbare pipelines vóór featurewerk.
+
+### Software Engineer — AT-Automation B.V.
+**mei 2019 – dec 2020 · Weert**
+
+Industriële automatisering. Software met Ignition (Inductive Automation) voor HMI/SCADA. Ignition 8.1 Core Certified. Specificatie naar werkende schermen/koppelingen in een productieteam (~30 min vanaf Roermond).
 
 ### ICT-adviseur — Pandhuis / Chimera
 **2017 – 2019**
