@@ -1,0 +1,40 @@
+{
+  "name": "Bart Massij",
+  "city": "Roermond",
+  "country": "NL",
+  "github": "https://github.com/bmassij",
+  "live": [
+    "https://www.monra-security.nl",
+    "https://last-wat-optimizer.vercel.app"
+  ],
+  "education": "Slim in ICT — Webdeveloper front-end én back-end (ca. 2019–2020): HTML, CSS, PHP",
+  "tools": ["Cursor", "Claude", "Roo Code", "LM Studio"],
+  "skills": [
+    "TypeScript", "JavaScript", "Next.js", "React", "PHP", "HTML", "CSS",
+    "Python", "Flutter", "Dart", "LLM", "RAG", "OpenRouter", "embeddings",
+    "n8n", "API", "Vercel", "Git"
+  ],
+    "roles_want": [
+    "AI Engineer", "AI Software Developer", "AI Software Engineer",
+    "Full Stack", "Webdeveloper", "Web Developer", "Automation", "Chatbot",
+    "Next.js", "PHP developer", "Stack Developer"
+  ],
+  "max_commute_min": 60,
+  "nearby": [
+    "Roermond", "Venlo", "Weert", "Panningen", "Elsloo", "Sittard", "Stein",
+    "Heerlen", "Deurne", "Horst", "Venray", "Maastricht", "Echt", "Dongen",
+    "Eindhoven", "Helmond", "Nederweert"
+  ],
+  "far_office_reject": [
+    "Amsterdam", "Rotterdam", "Den Haag", "Utrecht", "Haarlem", "Leiden",
+    "Groningen", "Leeuwarden", "Delfzijl", "Den Helder", "Lelystad",
+    "Gent", "Antwerpen", "Amersfoort"
+  ],
+  "min_freelance_eur": 55,
+  "prefer_remote": true,
+  "accept_hybrid": true,
+  "reject_if": [
+    "stage", "internship", "unpaid", "equity only", "founder cto zonder salaris",
+    "phd", "databricks", "5+ jaar full-stack must", "woocommerce €30"
+  ]
+}

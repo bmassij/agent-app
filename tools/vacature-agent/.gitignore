@@ -1,0 +1,4 @@
+data/
+contact.json
+*.pyc
+__pycache__/

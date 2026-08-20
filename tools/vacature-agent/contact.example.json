@@ -1,0 +1,11 @@
+{
+  "full_name": "Bart Massij",
+  "email": "bartmassij@gmail.com",
+  "phone": "06 52669690",
+  "city": "Roermond",
+  "smtp_host": "",
+  "smtp_port": 587,
+  "smtp_user": "",
+  "smtp_password": "",
+  "notify_email": "bartmassij@gmail.com"
+}

@@ -35,6 +35,8 @@ ios/Runner/GeneratedPluginRegistrant.*
 .env
 *.env
 cursor_api_key.txt
+tools/vacature-agent/data/
+tools/vacature-agent/contact.json
 
 # IDE
 .idea/
