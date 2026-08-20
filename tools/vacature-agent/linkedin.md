@@ -1,29 +1,88 @@
-# LinkedIn — Bart Massij (plakklare tekst)
-Profiel: https://www.linkedin.com/in/bart-massij-50b64b61/
+# LinkedIn: wat waar plakken
+Ga naar: https://www.linkedin.com/in/bart-massij-50b64b61/  
+Rechtsboven op je foto: **Ik** → **Bekijken** (je eigen profiel).  
+Elke sectie: potlood = bewerken, **+** = toevoegen. Daarna altijd **Opslaan**.
 
-Ik kan dit **niet zelf opslaan** in LinkedIn (geen login in de cloud-browser). Plak onderstaande blokken in: Bewerken → kopregel, Info, Ervaring, Opleiding, Info → website, Open to work, Vaardigheden.
+---
 
-## Wat er nu mis is (gezien in de browser)
+## STAP 1 — Kopregel (het eerste wat recruiters zien)
 
-- Geen kopregel. Recruiters zien: naam, **AT-Automation**, “ict”.
-- AT-Automation staat als huidige baan; die rol eindigde **dec 2020**. Zes jaar stilstand.
-- Info is één zin: “There are no mistakes, only lessons.” Geen stack, geen GitHub, geen live werk.
-- Activiteit is Ignition/webinars uit **2020**. Geen AI, Next.js, Flutter, ComfyUI.
-- ~87 connecties. Industry “ict” is te vaag voor “AI Engineer” / “Full Stack”.
-
-## 1. Kopregel (max. ~220 tekens)
+1. Potlood rechtsboven bij je naam (**Intro bewerken**).
+2. Veld **Kopregel** — wis wat er staat, plak:
 
 ```
 AI Software Developer | Next.js · LLM · RAG · Flutter | live AI-producten | Roermond · remote/hybride
 ```
 
-Korter alternatief:
+3. Veld **Branche** (als het er is): **IT-diensten en IT-consulting** of **Softwareontwikkeling**. Niet “ict”.
+4. **Opslaan**.
+
+---
+
+## STAP 2 — AT-Automation is NIET je huidige baan
+
+1. Scroll naar **Ervaring**.
+2. Potlood bij **AT-Automation B.V.**
+3. Vink **Ik werk hier momenteel** UIT.
+4. Vul in:
+
+| Veld | Wat erin |
+|---|---|
+| Functie | `Software Engineer` |
+| Bedrijf | `AT-Automation B.V.` |
+| Locatie | `Weert, Limburg, Nederland` |
+| Locatietype | Op locatie |
+| Startdatum | mei 2019 |
+| Einddatum | dec 2020 |
+| Beschrijving | blok hieronder |
 
 ```
-AI Software Developer (LLM, RAG, Next.js, Flutter) | Remote / Limburg
+Industriële automatisering. Software met Ignition (Inductive Automation) voor HMI/SCADA in productieomgevingen. Ignition 8.1 Core Certified. Specificatie → werkende schermen en koppelingen, in een team in Weert (~30 min vanaf Roermond).
 ```
 
-## 2. Info (About) — eerste regels zijn de preview
+5. **Opslaan**.
+
+---
+
+## STAP 3 — Nieuwe ervaring bovenaan (zelfstandig)
+
+1. Bij **Ervaring**: **+** → **Functie toevoegen**.
+2. Vul in:
+
+| Veld | Wat erin |
+|---|---|
+| Functie | `AI Software Developer` |
+| Type dienstverband | Fulltime (of Zelfstandige / freelance als dat er staat) |
+| Bedrijf | `Bart Massij` (of je eenmanszaak / KVK-naam) |
+| Locatie | `Roermond, Limburg, Nederland` |
+| Locatietype | Hybride |
+| Ik werk hier momenteel | AAN |
+| Startdatum | jan 2021 |
+| Beschrijving | blok hieronder |
+
+```
+Eigen producten en opdrachtwerk: AI-integratie, webapps, contentplatforms, automatisering.
+
+• Monra (live): multi-brand site + AI-assistent, OpenRouter, model-fallback — monra-security.nl
+• Spaanse Tuinen: Next.js + RAG (Chroma, embeddings) + Florence-2 beeldclassificatie
+• Last War Optimizer (live): vision-LLM, structured output — last-wat-optimizer.vercel.app
+• Aivance: Flutter-client + agent-orchestration — github.com/bmassij/agent-app
+• ComfyUI: workflows voor image generation (Stable Diffusion-pipeline)
+• Dare-kaartspel: LLM-contentpipeline (template → model → validatie → opslag)
+
+Werkt met Cursor, Claude, Roo Code en LM Studio. PHP/HTML/CSS vanuit opleiding; frameworks leer ik in de repo.
+```
+
+3. **Opslaan**.  
+Deze functie moet **boven** AT-Automation staan.
+
+---
+
+## STAP 4 — Info (About)
+
+1. Sectie **Info** (onder je kop) → potlood.
+2. Wis “There are no mistakes, only lessons”.
+3. Plak alles:
 
 ```
 Ik bouw software waarin AI werk uitvoert, niet alleen tekst.
@@ -40,88 +99,104 @@ Op zoek naar: AI Engineer / Full Stack / Webdeveloper. Remote of hybride, vanuit
 GitHub: github.com/bmassij
 ```
 
-## 3. Open to work (zichtbaar voor recruiters)
+4. **Opslaan**.
 
-Functies:
-- AI Engineer
-- AI Software Developer
-- Full Stack Developer
-- Webdeveloper
-- Software Developer
+---
 
-Locaties: Remote · Nederland · Limburg · Venlo · Eindhoven  
-Type: Fulltime · Contract (ZZP)  
-Startdatum: direct
+## STAP 5 — Contact / websites (in Intro)
 
-## 4. Website / custom button
+1. Potlood bij je naam (**Intro bewerken**) → **Koppelingen** of **Website** / **Contactgegevens bewerken**.
+2. Voeg 3 websites toe (type Website of Overig):
 
-- GitHub: https://github.com/bmassij
-- Website: https://www.monra-security.nl
-- Project: https://last-wat-optimizer.vercel.app
+| Label | URL |
+|---|---|
+| GitHub | `https://github.com/bmassij` |
+| Monra | `https://www.monra-security.nl` |
+| Last War Optimizer | `https://last-wat-optimizer.vercel.app` |
 
-## 5. Ervaring — volgorde (nieuwste eerst)
+3. **Opslaan**.
 
-### Zelfstandig software- & AI-ontwikkelaar
-**jan 2021 – heden · Roermond · Fulltime**
+---
 
-Functietitel: AI Software Developer  
-Bedrijf: Bart Massij (zelfstandig) of eigen naam als eenmanszaak.
+## STAP 6 — Opleiding
 
-```
-Eigen producten en opdrachtwerk: AI-integratie, webapps, contentplatforms, automatisering.
+1. Sectie **Opleiding** → **+** (of potlood als Slim in ICT er al staat).
 
-• Monra (live): multi-brand site + AI-assistent, OpenRouter, model-fallback — monra-security.nl
-• Spaanse Tuinen: Next.js + RAG (Chroma, embeddings) + Florence-2 beeldclassificatie
-• Last War Optimizer (live): vision-LLM, structured output — last-wat-optimizer.vercel.app
-• Aivance: Flutter-client + agent-orchestration (GitHub: bmassij/agent-app)
-• ComfyUI: workflows voor image generation (Stable Diffusion-pipeline)
-• Dare-kaartspel: LLM-contentpipeline (template → model → validatie → opslag)
+| Veld | Wat erin |
+|---|---|
+| School | `Slim in ICT` |
+| Diploma | `Webdeveloper (front-end en back-end)` |
+| Vakgebied | `HTML, CSS, PHP` |
+| Start | 2019 |
+| Eind | 2020 |
 
-Werkt met Cursor, Claude, Roo Code en LM Studio. PHP/HTML/CSS vanuit opleiding; frameworks leer ik in de repo.
-```
+2. **Opslaan**.
 
-### Software Engineer — AT-Automation B.V.
-**mei 2019 – dec 2020 · Weert · Fulltime**  
-Huidige functie: **uit** (niet meer “huidig”).
+---
 
-```
-Industriële automatisering. Software met Ignition (Inductive Automation) voor HMI/SCADA in productieomgevingen. Ignition 8.1 Core Certified. Specificatie → werkende schermen en koppelingen, in een team in Weert (~30 min vanaf Roermond).
-```
+## STAP 7 — Uitgelicht (Featured)
 
-### ICT-adviseur — Pandhuis / Chimera
-**2017 – 2019**
+1. Sectie **Uitgelicht** → **+** → **Link**.
+2. Drie keer, in deze volgorde:
+
+1. `https://github.com/bmassij`
+2. `https://www.monra-security.nl`
+3. `https://last-wat-optimizer.vercel.app`
+
+---
+
+## STAP 8 — Open voor werk
+
+1. Onder je foto: **Open voor werk** / **Open to work** (of **Bronnen** → **Open voor werk**).
+2. Functietitels (exact, een voor een):
+
+- `AI Engineer`
+- `AI Software Developer`
+- `Full Stack Developer`
+- `Webdeveloper`
+- `Software Developer`
+
+3. Locaties: `Remote` + `Nederland` + `Limburg`.
+4. Type: **Fulltime** én **Contract** (ZZP).
+5. Start: **Direct**.
+6. Zichtbaarheid: **Alleen recruiters** (geen groene banner) of **Alle LinkedIn-leden** als je de banner wilt.
+7. **Opslaan**.
+
+---
+
+## STAP 9 — Vaardigheden (zoekwoorden)
+
+1. Sectie **Vaardigheden** → **+**.
+2. Voeg deze toe, **bovenste 5 vastzetten** (pin) als LinkedIn dat toestaat:
+
+`TypeScript`  
+`Next.js`  
+`JavaScript`  
+`Large Language Models (LLM)`  
+`Flutter`
+
+Daarna ook: `React` `PHP` `Python` `HTML` `CSS` `Dart` `Retrieval Augmented Generation (RAG)` `Prompt Engineering` `Git` `REST APIs` `Vercel` `n8n` `Cursor` `ComfyUI`
+
+Niet toevoegen als top-skill: FastAPI, PostgreSQL, Redis, Kubernetes, Kotlin, Swift.
+
+---
+
+## STAP 10 — Pandhuis (alleen beschrijving, als die ervaring er al staat)
+
+Potlood bij die functie, beschrijving:
 
 ```
 Systeemoplossingen, websites/webshop, AVG, klantensysteem. Bedrijfsbehoefte vertalen naar werkbare ICT.
 ```
 
-Oudere rollen kort laten staan (UPS, bibliotheken, verkoop) of inklappen — niet bovenaan.
+UPS / bibliotheken / verkoop: laten staan, niet bovenaan.
 
-## 6. Opleiding
+---
 
-```
-Slim in ICT — Webdeveloper (front-end én back-end)
-ca. 2019 – 2020
-HTML, CSS, PHP
-```
+## Klaar als
 
-## 7. Vaardigheden (volgorde = zoekwoorden)
-
-TypeScript, JavaScript, Next.js, React, PHP, HTML, CSS, Python, Flutter, Dart, Large Language Models (LLM), Retrieval Augmented Generation (RAG), Prompt Engineering, OpenAI, Git, REST APIs, Vercel, Automation, n8n, Cursor, ComfyUI, Image Generation, Software Development
-
-Niet als top-skill: FastAPI, PostgreSQL, Redis, Kubernetes, Kotlin, Swift.
-
-## 8. Featured
-
-1. GitHub https://github.com/bmassij
-2. Monra https://www.monra-security.nl
-3. Last War Optimizer https://last-wat-optimizer.vercel.app
-
-## 9. Na het plakken (5 min)
-
-- Zet AT-Automation op einddatum dec 2020.
-- Zet Open to work op **alleen recruiters** als je geen groene banner wilt; anders publiek.
-- Eén post: “Ik bouw live AI-producten (Next.js, LLM, RAG, Flutter). Open for AI Engineer / Full Stack, remote of hybride Limburg. github.com/bmassij”
-- Connecties: RSC, ten50, Follo, Genips, Indicia — niet 10x BJAK Kotlin.
-
-Niet verzinnen: geen FastAPI-productie, geen eigen foundation models, geen huidige baan bij AT-Automation.
+- Onder je naam staat de nieuwe kopregel (niet AT-Automation).
+- Eerste ervaring = AI Software Developer, **heden**.
+- AT-Automation = tot **dec 2020**.
+- Info is het lange blok, niet de quote.
+- GitHub staat bij websites én Uitgelicht.
