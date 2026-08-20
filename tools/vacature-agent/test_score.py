@@ -141,6 +141,39 @@ class ScoreTests(unittest.TestCase):
         self.assertEqual(r["decision"], KEEP)
         self.assertIn("AI/automatisering", r["reasons"])
 
+    def test_product_manager_rejected(self):
+        job = {
+            "title": "Technical Product Manager",
+            "location": "Netherlands",
+            "work_mode": "100% remote",
+            "summary": "LLM payments KYC TypeScript",
+            "url": "https://example.com/tpm",
+        }
+        r = score_job(job, PROFILE)
+        self.assertEqual(r["decision"], REJECT)
+
+    def test_kotlin_android_without_flutter_rejected(self):
+        job = {
+            "title": "Android Developer AI Finance Agent",
+            "location": "Netherlands",
+            "work_mode": "100% remote",
+            "summary": "Kotlin Jetpack Compose LLM",
+            "url": "https://example.com/android",
+        }
+        r = score_job(job, PROFILE)
+        self.assertEqual(r["decision"], REJECT)
+
+    def test_flutter_remote_still_kept(self):
+        job = {
+            "title": "Mobile Engineer Flutter",
+            "location": "Netherlands",
+            "work_mode": "100% remote",
+            "summary": "Flutter Dart LLM TypeScript",
+            "url": "https://example.com/flutter",
+        }
+        r = score_job(job, PROFILE)
+        self.assertEqual(r["decision"], KEEP)
+
 
 if __name__ == "__main__":
     unittest.main()

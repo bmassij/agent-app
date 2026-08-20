@@ -37,6 +37,12 @@ _BAD = re.compile(
     re.I,
 )
 _LOW_RATE = re.compile(r"€\s*([1-4]\d)\s*[–—-]?\s*(?:per\s*)?(?:uur|/u)", re.I)
+_PM_LANE = re.compile(
+    r"\b(product manager|product lead|product owner|technical product manager)\b",
+    re.I,
+)
+_NATIVE_MOBILE = re.compile(r"\b(kotlin|swiftui|\bswift\b|jetpack compose)\b", re.I)
+_CROSS_MOBILE = re.compile(r"\b(flutter|dart|react native)\b", re.I)
 
 
 def _blob(job: dict[str, Any]) -> str:
@@ -93,6 +99,20 @@ def score_job(job: dict[str, Any], profile: dict[str, Any]) -> dict[str, Any]:
             "decision": REJECT,
             "score": 0,
             "reasons": [f"uurtarief onder €{profile['min_freelance_eur']}"],
+        }
+
+    title_raw = str(job.get("title") or "")
+    if _PM_LANE.search(title_raw):
+        return {
+            "decision": REJECT,
+            "score": 0,
+            "reasons": ["afgewezen: productrol, geen builder/engineer"],
+        }
+    if _NATIVE_MOBILE.search(text) and not _CROSS_MOBILE.search(text):
+        return {
+            "decision": REJECT,
+            "score": 0,
+            "reasons": ["afgewezen: native Kotlin/Swift, geen Flutter"],
         }
 
     nearby_hit = _has_nearby(places, profile.get("nearby") or [])
