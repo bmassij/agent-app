@@ -25,13 +25,14 @@ Kopieer `contact.example.json` naar `contact.json` (staat niet in git) voor naam
 - Losse "remote-opties" telt **niet** als fully remote
 - Stage, unpaid, equity-only
 - Uurtarief onder €55
-- Score te laag (geen AI/stack/thuiswerk)
+- Score te laag (geen stack, geen thuiswerk, te ver)
 
 ## Wat erin mag
 
 - Remote / remote-first / hybride + thuiswerken
 - Binnen ~60 min van Roermond (Venlo, Elsloo, Panningen, Heerlen, Dongen, Maastricht, Eindhoven, …)
-- AI, Next.js, TypeScript, PHP, automatisering, chatbot, ComfyUI / image generation
+- Websites, WordPress, PHP, HTML/CSS, front-end, Next.js, TypeScript — AI-rol is een plus, geen eis
+- AI Engineer / ComfyUI / n8n als het toevallig past
 
 ## Cursor-agent (jij keurt goed)
 

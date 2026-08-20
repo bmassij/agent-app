@@ -27,7 +27,8 @@ _AI = re.compile(
 )
 _STACK = re.compile(
     r"\b(next\.?js|typescript|react|php|python|flutter|javascript|"
-    r"wordpress|laravel|vercel|fastapi)\b",
+    r"wordpress|laravel|drupal|html|css|webshop|website|"
+    r"front-?end|frontend|vercel|woocommerce)\b",
     re.I,
 )
 _BAD = re.compile(

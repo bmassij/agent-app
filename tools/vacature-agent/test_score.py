@@ -175,5 +175,18 @@ class ScoreTests(unittest.TestCase):
         self.assertEqual(r["decision"], KEEP)
 
 
+    def test_nearby_php_webdeveloper_without_ai_kept(self):
+        job = {
+            "title": "Webdeveloper PHP",
+            "location": "Venlo",
+            "work_mode": "kantoor",
+            "summary": "HTML CSS PHP websites WordPress",
+            "url": "https://example.com/web",
+        }
+        r = score_job(job, PROFILE)
+        self.assertEqual(r["decision"], KEEP)
+        self.assertIn("stack-match", r["reasons"])
+
+
 if __name__ == "__main__":
     unittest.main()

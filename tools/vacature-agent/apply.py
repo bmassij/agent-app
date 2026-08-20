@@ -55,6 +55,27 @@ _HOOKS = {
         "TypeScript/React/Next.js in productie. .NET/Java niet als hoofdtaal; "
         "patterns in jullie services doorgrond ik in dagen, in de repo."
     ),
+    "Aiwos": (
+        "100% remote vanuit Roermond past. PHP, HTML, CSS: Slim in ICT. "
+        "WordPress-themes/plugins leer ik in jullie repo (hooks, CPT's) met Cursor/Claude. "
+        "n8n en AI-in-de-workflow is hoe ik al werk. Geen ZZP: loondienst."
+    ),
+    "Rock the Web": (
+        "Heerlen ~40 min. WordPress/PHP-basis is er; Laravel en WooCommerce in jullie codebase, "
+        "versneld met Cursor. AI-koppelingen en automatisering bouw ik mee."
+    ),
+    "Stogger": (
+        "Helden is dichtbij Roermond. WordPress/Elementor-websites + automatisering + Claude: "
+        "dat is precies hoe ik lever. Geen specialist-op-één-tool, wel bouwen tot het live staat."
+    ),
+    "NGAGE IT": (
+        "Noord-Limburg hybride. PHP heb ik (opleiding + toepassen). Symfony is het framework "
+        "eromheen — in jullie CMS-repo, met tests, niet als vijf jaar Symfony op papier."
+    ),
+    "Van Dyck Brown": (
+        "Eindhoven Strijp-S ~55 min, vast of freelance. WordPress/PHP/HTML/CSS, Flutter ken ik "
+        "uit Aivance. AI-workflows om sneller te bouwen: Cursor/Claude/Roo. Freelance als het salaris krap is."
+    ),
 }
 
 
@@ -80,9 +101,9 @@ Ik solliciteer naar {job.get("title")}.
 
 Ik woon in Roermond. Remote of hybride met thuiswerken is voor mij essentieel. {job.get("location") or ""}
 
-Ik bouw software waarin AI werk uitvoert, niet alleen tekst. Live: {live}. Daarnaast RAG, vision, image generation (ComfyUI) en agent-orchestration ({profile.get("github")}). Opleiding: {profile.get("education")}.
+Ik bouw websites en webapps: PHP, HTML, CSS (Slim in ICT, front-end én back-end, ca. 2019–2020), TypeScript, Next.js. Live: {live}. GitHub: {profile.get("github")}.
 
-Ik werk AI-native: Cursor, Claude, Roo Code en LM Studio (lokale LLM's). Geen chat ernaast — agents in de editor, eigen projectregels. Daardoor lever ik sneller, en dichten we stack-gaten in jullie codebase. Ik blijf eigenaar van de code.
+AI is hoe ik lever, niet de eis aan de vacature: Cursor, Claude, Roo Code, LM Studio. Stack-gaten (Laravel, WordPress, n8n) dicht ik in jullie repo; ik review en begrijp elke wijziging.
 
 {hook}Zelf een dare-kaartspel gebouwd met LLM-contentpipeline (template → model → validatie → opslag): content die moet kloppen, geen ruis.
 
