@@ -46,6 +46,29 @@ class ApplyTests(unittest.TestCase):
         self.assertIn("PHP", text)
         self.assertIn("Cursor", text)
 
+    def test_letter_apply_recruitment_is_honest(self):
+        profile = json.loads((ROOT / "profile.json").read_text(encoding="utf-8"))
+        contact = load_contact()
+        path = write_letter(
+            {
+                "id": "testapplyweert",
+                "title": "AI Engineer",
+                "company": "Apply Recruitment (intermediair)",
+                "location": "Weert",
+                "contact_name": "Robin Aeissing",
+                "reasons": ["dichtbij: Weert", "AI/automatisering"],
+            },
+            profile,
+            contact,
+        )
+        text = path.read_text(encoding="utf-8")
+        self.assertIn("Beste Robin", text)
+        self.assertIn("Castorstraat", text)
+        self.assertIn("AT-Automation", text)
+        self.assertIn("Geen HBO-diploma", text)
+        self.assertIn("€4500", text)
+        self.assertNotIn("Remote of hybride met thuiswerken is voor mij essentieel", text)
+
 
 if __name__ == "__main__":
     unittest.main()

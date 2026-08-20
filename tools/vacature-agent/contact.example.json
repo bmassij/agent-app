@@ -1,8 +1,9 @@
 {
   "full_name": "Bart Massij",
   "email": "bartmassij@gmail.com",
-  "phone": "06 52669690",
+  "phone": "06 38577446",
   "city": "Roermond",
+  "address": "Castorstraat, Roermond",
   "smtp_host": "",
   "smtp_port": 587,
   "smtp_user": "",

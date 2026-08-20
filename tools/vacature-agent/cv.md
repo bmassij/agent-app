@@ -3,8 +3,8 @@
 **Bart Massij**
 AI Software Developer | LLM-integratie, automatisering & productontwikkeling
 
-Roermond, Nederland
-06 52669690 · bartmassij@gmail.com
+Castorstraat, Roermond, Nederland
+06 38577446 · bartmassij@gmail.com
 GitHub: [github.com/bmassij](https://github.com/bmassij)
 Live werk: [monra-security.nl](https://www.monra-security.nl) · [last-wat-optimizer.vercel.app](https://last-wat-optimizer.vercel.app)
 

@@ -76,7 +76,55 @@ _HOOKS = {
         "Eindhoven Strijp-S ~55 min, vast of freelance. WordPress/PHP/HTML/CSS, Flutter ken ik "
         "uit Aivance. AI-workflows om sneller te bouwen: Cursor/Claude/Roo. Freelance als het salaris krap is."
     ),
+    "Apply Recruitment": (
+        "Sollicitatie via https://www.applyrecruitment.com/vacatures/ai-engineer "
+        "(ook werk.nl DGR72694329). Consultancy, €4500–€7500, deels thuiswerken.\n\n"
+        "De technische helft is hoe ik al werk: AI-tools (Cursor, Claude, Roo Code, LM Studio), "
+        "workflows en templates, agents, kwaliteit van output. Python en API’s in toegepaste "
+        "projecten. Image generation hands-on met ComfyUI.\n\n"
+        "De andere helft — organisatiebrede workshops, managementadvies, later klanten — "
+        "doe ik niet als fulltime trainer. Wel: mensen 1-op-1 meenemen in wat werkt, "
+        "kennis omzetten naar herbruikbare configs. Groei naar consulting is interessant "
+        "als de technische basis eerst staat.\n\n"
+        "Opleiding: Slim in ICT, webdeveloper front-end én back-end (HTML, CSS, PHP), "
+        "circa 2019–2020. Geen HBO-diploma. Als HBO een harde eis is, hoor ik dat graag meteen."
+    ),
 }
+
+# Opening over locatie: default remote-eerst, behalve kantoor om de hoek.
+_LEADS = {
+    "Apply Recruitment": (
+        "Ik woon in Roermond (Castorstraat). Weert is ~20 min; ik werkte daar als "
+        "Software Engineer bij AT-Automation (mei 2019–dec 2020). Deels thuiswerken "
+        "op de vacature past."
+    ),
+}
+
+
+def _company_key(company: str, table: dict[str, str]) -> str | None:
+    if company in table:
+        return company
+    lower = company.lower()
+    for key in table:
+        if key.lower() in lower:
+            return key
+    return None
+
+
+def _salutation(job: dict[str, Any], company: str) -> str:
+    name = str(job.get("contact_name") or "").strip()
+    if name:
+        return f"Beste {name.split()[0]},"
+    return f"Beste {company},"
+
+
+def _lead(job: dict[str, Any], company: str) -> str:
+    key = _company_key(company, _LEADS)
+    if key:
+        return _LEADS[key]
+    loc = str(job.get("location") or "").strip()
+    line = "Ik woon in Roermond. Remote of hybride met thuiswerken is voor mij essentieel."
+    return f"{line} {loc}".strip()
 
 
 def load_contact() -> dict[str, Any]:
@@ -89,17 +137,18 @@ def load_contact() -> dict[str, Any]:
 def write_letter(job: dict[str, Any], profile: dict[str, Any], contact: dict[str, Any]) -> Path:
     OUT.mkdir(parents=True, exist_ok=True)
     company = str(job.get("company") or "team")
-    hook = _HOOKS.get(company, "")
+    hook_key = _company_key(company, _HOOKS)
+    hook = _HOOKS.get(hook_key, "") if hook_key else ""
     if hook:
         hook = hook + "\n\n"
     live = ", ".join(profile.get("live") or [])
     body = f"""Onderwerp: Sollicitatie {job.get("title")} — {contact.get("city")}
 
-Beste {company},
+{_salutation(job, company)}
 
 Ik solliciteer naar {job.get("title")}.
 
-Ik woon in Roermond. Remote of hybride met thuiswerken is voor mij essentieel. {job.get("location") or ""}
+{_lead(job, company)}
 
 Ik bouw websites en webapps: PHP, HTML, CSS (Slim in ICT, front-end én back-end, ca. 2019–2020), TypeScript, Next.js. Live: {live}. GitHub: {profile.get("github")}.
 

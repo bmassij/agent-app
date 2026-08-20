@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <title>CV Bart Massij</title>
+  <style>
+    @page { size: A4; margin: 14mm 16mm; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Source Sans Pro", "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 10.2pt;
+      line-height: 1.35;
+      color: #1a1a1a;
+    }
+    h1 { font-size: 22pt; margin: 0 0 2px; letter-spacing: -0.02em; }
+    .role { font-size: 11.5pt; color: #333; margin: 0 0 8px; }
+    .meta { font-size: 9.5pt; color: #333; margin: 0 0 12px; }
+    h2 {
+      font-size: 11pt;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1.5px solid #1a1a1a;
+      margin: 14px 0 6px;
+      padding-bottom: 2px;
+    }
+    h3 { font-size: 10.4pt; margin: 8px 0 2px; }
+    p, ul { margin: 0 0 6px; }
+    ul { padding-left: 18px; }
+    li { margin-bottom: 2px; }
+    .job { margin-bottom: 8px; }
+    .when { font-weight: normal; color: #444; }
+    table { width: 100%; border-collapse: collapse; font-size: 9.4pt; }
+    th, td { text-align: left; vertical-align: top; padding: 3px 6px 3px 0; }
+    th { border-bottom: 1px solid #ccc; }
+    a { color: #1a1a1a; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>Bart Massij</h1>
+  <p class="role">AI Software Developer — workflows, LLM-integratie &amp; automatisering</p>
+  <p class="meta">
+    Castorstraat, Roermond<br>
+    06 38577446 · bartmassij@gmail.com<br>
+    <a href="https://github.com/bmassij">github.com/bmassij</a>
+    · <a href="https://www.monra-security.nl">monra-security.nl</a>
+    · <a href="https://last-wat-optimizer.vercel.app">last-wat-optimizer.vercel.app</a>
+  </p>
+
+  <h2>Profiel</h2>
+  <p>
+    Ik bouw AI die werk uitvoert: tools kiezen, herbruikbare workflows en templates,
+    agents, en output die moet kloppen (schema, validatie, geen ruis). Dagelijks in
+    Cursor, Claude, Roo Code en LM Studio. Geen ML-onderzoeker; geen eigen foundation models.
+    Wel: praktische toepassingen tot ze live staan, en mensen meenemen in wat werkt.
+  </p>
+
+  <h2>Kern — eerlijk niveau</h2>
+  <table>
+    <tr><th>Gebied</th><th>Niveau</th><th>Waar</th></tr>
+    <tr><td>AI-tools / LLM-workflows</td><td>Dagelijks</td><td>Cursor, Claude, Roo Code, LM Studio</td></tr>
+    <tr><td>TypeScript / Next.js / JS</td><td>Productie</td><td>Monra, Last War Optimizer, Spaanse Tuinen</td></tr>
+    <tr><td>API’s, Git, Vercel</td><td>Productie</td><td>OpenRouter, REST, SSE, GitHub</td></tr>
+    <tr><td>Python</td><td>Toegepast</td><td>Indexers, embeddings, vision-scripts</td></tr>
+    <tr><td>PHP, HTML, CSS</td><td>Opleiding + toegepast</td><td>Slim in ICT, 2019–2020</td></tr>
+    <tr><td>RAG / embeddings / vision</td><td>Toegepast</td><td>Chroma, Florence-2, vision-LLMs</td></tr>
+    <tr><td>Image generation</td><td>Hands-on</td><td>ComfyUI-workflows (geen publieke repo)</td></tr>
+    <tr><td>Flutter / Dart</td><td>Sterk</td><td>Aivance (agent-orchestratie)</td></tr>
+  </table>
+
+  <h2>Werkervaring</h2>
+  <div class="job">
+    <h3>Zelfstandig software- &amp; AI-ontwikkelaar <span class="when">· 2021 – heden · Roermond</span></h3>
+    <ul>
+      <li>Live AI-producten: LLM-chat met kennisbank en model-fallback (Monra), vision + structured output (Last War Optimizer), RAG + beeldclassificatie (Spaanse Tuinen).</li>
+      <li>Agent-orchestratie (Aivance): intent, briefing, dispatch naar uitvoerende agents.</li>
+      <li>Contentpipeline (dare-kaartspel): template → model → validatie → opslag. Zelfde probleem als “AI-output die moet kloppen”.</li>
+      <li>Collega’s en opdrachtgevers 1-op-1 meenemen in AI-gebruik; geen organisatiebrede workshop-hoofdtaak.</li>
+    </ul>
+  </div>
+  <div class="job">
+    <h3>Software Engineer — AT-Automation B.V. <span class="when">· mei 2019 – dec 2020 · Weert</span></h3>
+    <p>Industriële automatisering, Ignition (HMI/SCADA), Ignition 8.1 Core Certified. Specificatie naar werkende schermen/koppelingen in een productieteam. Weert is bekend terrein (~20 min vanaf Castorstraat, Roermond).</p>
+  </div>
+  <div class="job">
+    <h3>ICT-adviseur — Pandhuis / Chimera <span class="when">· 2017 – 2019</span></h3>
+    <p>Websites/webshop, AVG, klantsysteem: bedrijfsbehoefte vertalen naar werkbare ICT.</p>
+  </div>
+
+  <h2>Projecten (aantoonbaar)</h2>
+  <p><strong>Monra</strong> — Next.js, TypeScript, live AI-assistent met OpenRouter (meerdere modellen, fallback). <a href="https://www.monra-security.nl">monra-security.nl</a></p>
+  <p><strong>Last War Optimizer</strong> — Next.js, vision-LLM, structured output. <a href="https://last-wat-optimizer.vercel.app">last-wat-optimizer.vercel.app</a></p>
+  <p><strong>Aivance</strong> — Flutter-client + orchestratielaag boven uitvoerende agents. <a href="https://github.com/bmassij/agent-app">github.com/bmassij/agent-app</a></p>
+  <p><strong>Spaanse Tuinen</strong> — Next.js + Python RAG (Chroma, embeddings) + Florence-2 classificatie.</p>
+  <p><strong>ComfyUI</strong> — image-generation workflows (nodes, prompts, modelkeuze). Hands-on, geen publieke repo.</p>
+
+  <h2>Opleiding</h2>
+  <p><strong>Slim in ICT — Webdeveloper front-end én back-end</strong> · ca. 2019–2020 · HTML, CSS, PHP. Praktische beroepsopleiding, geen HBO/WO-diploma.</p>
+
+  <h2>Talen &amp; beschikbaarheid</h2>
+  <p>Nederlands (moedertaal). Direct beschikbaar. Loondienst. Hybride / deels thuiswerken vanuit Roermond; kantoor Weert is werkbaar.</p>
+</body>
+</html>
