@@ -31,7 +31,7 @@
   "far_office_reject": [
     "Amsterdam", "Rotterdam", "Den Haag", "Utrecht", "Haarlem", "Leiden",
     "Groningen", "Leeuwarden", "Delfzijl", "Den Helder", "Lelystad",
-    "Gent", "Antwerpen", "Amersfoort"
+    "Gent", "Antwerpen", "Amersfoort", "Hoofddorp", "Schiphol"
   ],
   "min_freelance_eur": 55,
   "prefer_remote": true,
