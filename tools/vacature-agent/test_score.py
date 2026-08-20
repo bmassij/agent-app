@@ -129,6 +129,18 @@ class ScoreTests(unittest.TestCase):
         self.assertTrue(any("Dongen" in x for x in r["reasons"]))
         self.assertFalse(any("Roermond" in x for x in r["reasons"]))
 
+    def test_comfyui_remote_counts_as_ai_match(self):
+        job = {
+            "title": "Full Stack Developer Python",
+            "location": "100% remote",
+            "work_mode": "altijd remote",
+            "summary": "ComfyUI image generation workflows, TypeScript",
+            "url": "https://example.com/comfy",
+        }
+        r = score_job(job, PROFILE)
+        self.assertEqual(r["decision"], KEEP)
+        self.assertIn("AI/automatisering", r["reasons"])
+
 
 if __name__ == "__main__":
     unittest.main()

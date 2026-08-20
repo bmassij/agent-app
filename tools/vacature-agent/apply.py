@@ -18,7 +18,9 @@ _HOOKS = {
         "Panningen is een korte rit vanuit Roermond; Deurne en Eindhoven ook. "
         "Hybride: bouwen vanuit huis, overleg op kantoor. "
         "Vacaturecontent die moet kloppen (geen slop) is hetzelfde probleem als "
-        "mijn LLM-contentpipeline: genereren → valideren → opslaan."
+        "mijn LLM-contentpipeline: genereren → valideren → opslaan. "
+        "Renewers maakt ook visuals: ComfyUI/image generation heb ik hands-on gedaan "
+        "(workflows, prompts, modelkeuze) — naast vision om beelden te lezen."
     ),
     "ten50": (
         "Remote-first past: productief thuis, Elsloo wanneer het team dat wil (~30 min). "
@@ -32,7 +34,8 @@ _HOOKS = {
     "Follo Agency": (
         "Kantoorvoorkeur Dongen (~50 min). Groningen/Gent te ver wekelijks. "
         "Laravel is niet mijn dagelijkse framework; PHP wél (Slim in ICT, 2019–2020). "
-        "De AI-laag (LLM APIs, n8n) bouw ik meteen."
+        "De AI-laag (LLM APIs, n8n) bouw ik meteen. "
+        "Campagnebeelden: ComfyUI-workflows voor image generation, niet alleen tekst."
     ),
     "TwoFeetUp": (
         "Jullie vragen Cursor/Claude als dagelijkse workflow — die staat. "
@@ -77,7 +80,7 @@ Ik solliciteer naar {job.get("title")}.
 
 Ik woon in Roermond. Remote of hybride met thuiswerken is voor mij essentieel. {job.get("location") or ""}
 
-Ik bouw software waarin AI werk uitvoert, niet alleen tekst. Live: {live}. Daarnaast RAG, vision en agent-orchestration ({profile.get("github")}). Opleiding: {profile.get("education")}.
+Ik bouw software waarin AI werk uitvoert, niet alleen tekst. Live: {live}. Daarnaast RAG, vision, image generation (ComfyUI) en agent-orchestration ({profile.get("github")}). Opleiding: {profile.get("education")}.
 
 Ik werk AI-native: Cursor, Claude, Roo Code en LM Studio (lokale LLM's). Geen chat ernaast — agents in de editor, eigen projectregels. Daardoor lever ik sneller, en dichten we stack-gaten in jullie codebase. Ik blijf eigenaar van de code.
 

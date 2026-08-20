@@ -8,11 +8,13 @@
     "https://last-wat-optimizer.vercel.app"
   ],
   "education": "Slim in ICT — Webdeveloper front-end én back-end (ca. 2019–2020): HTML, CSS, PHP",
-  "tools": ["Cursor", "Claude", "Roo Code", "LM Studio"],
+  "tools": ["Cursor", "Claude", "Roo Code", "LM Studio", "ComfyUI"],
+  "image_gen": "ComfyUI-workflows voor image generation (Stable Diffusion-pipeline): nodes, prompts, modelkeuze, itereren. Hands-on, geen eigen foundation models, geen publieke ComfyUI-repo.",
   "skills": [
     "TypeScript", "JavaScript", "Next.js", "React", "PHP", "HTML", "CSS",
     "Python", "Flutter", "Dart", "LLM", "RAG", "OpenRouter", "embeddings",
-    "n8n", "API", "Vercel", "Git"
+    "n8n", "API", "Vercel", "Git", "ComfyUI", "image generation",
+    "Stable Diffusion", "vision"
   ],
     "roles_want": [
     "AI Engineer", "AI Software Developer", "AI Software Engineer",

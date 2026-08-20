@@ -31,7 +31,7 @@ Kopieer `contact.example.json` naar `contact.json` (staat niet in git) voor naam
 
 - Remote / remote-first / hybride + thuiswerken
 - Binnen ~60 min van Roermond (Venlo, Elsloo, Panningen, Heerlen, Dongen, Maastricht, Eindhoven, …)
-- AI, Next.js, TypeScript, PHP, automatisering, chatbot
+- AI, Next.js, TypeScript, PHP, automatisering, chatbot, ComfyUI / image generation
 
 ## Cursor-agent (jij keurt goed)
 

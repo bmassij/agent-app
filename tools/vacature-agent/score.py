@@ -21,7 +21,8 @@ _HYBRID = re.compile(
 )
 _AI = re.compile(
     r"\b(ai engineer|ai developer|llm|rag|chatbot|agentic|openrouter|"
-    r"cursor|n8n|generative ai|genai|openai|automation)\b",
+    r"cursor|n8n|generative ai|genai|openai|automation|"
+    r"comfyui|stable diffusion|image generation|beeldgeneratie|midjourney)\b",
     re.I,
 )
 _STACK = re.compile(
